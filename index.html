@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Płatność Kryptowalutami</title>
+  <!-- Biblioteka do generowania kodów QR -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    /* Zmienne dla motywu ciemnego (domyślne) */
+    :root {
+      --bg-color: #0b0e14;
+      --card-bg: #121824;
+      --card-border: #1e293b;
+      --button-bg: #182232;
+      --button-hover: #222f46;
+      --accent-color: #4f46e5;
+      --accent-glow: rgba(79, 70, 229, 0.4);
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --badge-bg: #1f293d;
+      --input-bg: #0d131d;
+      --modal-bg: rgba(0, 0, 0, 0.75);
+      --modal-card: #121824;
+    }
+
+    /* Zmienne dla motywu jasnego */
+    [data-theme="light"] {
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --card-border: #e2e8f0;
+      --button-bg: #f1f5f9;
+      --button-hover: #e2e8f0;
+      --accent-color: #4f46e5;
+      --accent-glow: rgba(79, 70, 229, 0.2);
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --badge-bg: #e2e8f0;
+      --input-bg: #f8fafc;
+      --modal-bg: rgba(15, 23, 42, 0.6);
+      --modal-card: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 800px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-left: 4px;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .action-btn {
+      background: var(--button-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .action-btn:hover {
+      background: var(--button-hover);
+    }
+
+    /* Wybór kryptowalut u góry */
+    .crypto-selector {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+    }
+
+    .crypto-btn {
+      background: var(--button-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 16px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      color: var(--text-main);
+    }
+
+    .crypto-btn:hover {
+      background: var(--button-hover);
+      transform: translateY(-2px);
+    }
+
+    .crypto-btn.active {
+      border-color: var(--accent-color);
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    .crypto-btn svg {
+      width: 38px;
+      height: 38px;
+    }
+
+    .crypto-btn span {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    /* Główna karta z informacjami i kodem QR */
+    .main-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 32px;
+      display: flex;
+      gap: 36px;
+      align-items: center;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
+    }
+
+    .qr-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .qr-container {
+      background: #ffffff;
+      padding: 14px;
+      border-radius: 18px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .qr-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .details-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .header-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-info svg {
+      width: 42px;
+      height: 42px;
+    }
+
+    .crypto-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .crypto-name {
+      font-size: 26px;
+      font-weight: 700;
+    }
+
+    .crypto-symbol {
+      background: var(--badge-bg);
+      color: var(--text-muted);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid var(--card-border);
+    }
+
+    .network-warning {
+      background: var(--button-bg);
+      border: 1px solid var(--card-border);
+      color: #3b82f6;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .address-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .address-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .address-box {
+      display: flex;
+      background: var(--input-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 6px 6px 6px 14px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .address-text {
+      font-family: monospace;
+      font-size: 14px;
+      color: var(--text-main);
+      word-break: break-all;
+    }
+
+    .copy-btn {
+      background: #4338ca;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .copy-btn:hover {
+      background: #3730a3;
+    }
+
+    /* Modal instrukcji */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--modal-bg);
+      backdrop-filter: blur(4px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      z-index: 100;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--modal-card);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      max-width: 500px;
+      width: 100%;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .instruction-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .step-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .step-number {
+      background: var(--accent-color);
+      color: white;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .step-text {
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--text-main);
+    }
+
+    @media (max-width: 650px) {
+      .crypto-selector {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .main-card {
+        flex-direction: column;
+        padding: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header-bar">
+    <div class="section-title">WYBIERZ WALUTĘ:</div>
+    <div class="top-actions">
+      <button class="action-btn" id="help-btn">
+        ❓ Jak wysłać?
+      </button>
+      <button class="action-btn" id="theme-toggle">
+        🌙 Motyw
+      </button>
+    </div>
+  </div>
+
+  <!-- Przełączniki kryptowalut -->
+  <div class="crypto-selector" id="selector"></div>
+
+  <!-- Główna karta ze skanem i danymi do kopiowania -->
+  <div class="main-card">
+    <div class="qr-section">
+      <div class="qr-container" id="qrcode"></div>
+      <div class="qr-label">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Zeskanuj aplikacją portfela
+      </div>
+    </div>
+
+    <div class="details-section">
+      <div class="header-info">
+        <div id="crypto-icon"></div>
+        <div class="crypto-title-group">
+          <span class="crypto-name" id="crypto-name">Bitcoin</span>
+          <span class="crypto-symbol" id="crypto-symbol">BTC</span>
+        </div>
+      </div>
+
+      <div class="network-warning">
+        <span>ℹ</span>
+        <span id="network-text">Wysyłaj tylko przez: Sieć Bitcoin (BTC)</span>
+      </div>
+
+      <div class="address-group">
+        <div class="address-label">Adres portfela:</div>
+        <div class="address-box">
+          <span class="address-text" id="address-text">...</span>
+          <button class="copy-btn" id="copy-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Kopiuj
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Instrukcji -->
+<div class="modal-overlay" id="help-modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title">Jak wykonać płatność?</div>
+      <button class="close-btn" id="close-modal">&times;</button>
+    </div>
+    <div class="instruction-steps">
+      <div class="step-item">
+        <div class="step-number">1</div>
+        <div class="step-text">Otwórz swoją aplikację giełdy lub portfela kryptowalutowego (np. Binance, Trust Wallet, MetaMask).</div>
+      </div>
+      <div class="step-item">
+        <div class="step-number">2</div>
+        <div class="step-text">Wybierz opcję <strong>Wypłać / Wysłyj (Send / Withdraw)</strong>.</div>
+      </div>
+      <div class="step-item">
+        <div class="step-number">3</div>
+        <div class="step-text">Zeskanuj podany powyżej kod QR lub skopiuj i wklej adres portfela.</div>
+      </div>
+      <div class="step-item">
+        <div class="step-number">4</div>
+        <div class="step-text"><strong>Ważne:</strong> Upewnij się, że wybierasz odpowiednią sieć podaną w ostrzeżeniu, aby transakcja dotarła bezpiecznie.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Dane kryptowalut
+  const cryptos = [
+    {
+      id: 'btc',
+      name: 'Bitcoin',
+      symbol: 'BTC',
+      network: 'Sieć Bitcoin (BTC)',
+      address: 'bc1qm6w0t38sm9mh63dusqe3zx2pmfhpnp86jz4znk',
+      icon: `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#F7931A"/><path d="M46.101 26.314c.616-4.116-2.52-6.33-6.806-7.808l1.39-5.574-3.391-.846-1.352 5.424c-.891-.222-1.808-.433-2.722-.64l1.362-5.46-3.392-.846-1.39 5.573c-.739-.168-1.463-.336-2.164-.512l.004-.018-4.678-1.168-.903 3.623s2.518.577 2.465.613c1.375.343 1.624 1.253 1.582 1.975l-1.586 6.357c.095.024.218.059.353.113-.114-.028-.242-.058-.371-.09l-2.222 8.91c-.168.416-.596 1.042-1.558.803.035.05-2.465-.615-2.465-.615l-1.685 3.886 4.415 1.101c.821.205 1.625.42 2.417.625l-1.405 5.637 3.39.846 1.39-5.573c.926.251 1.824.482 2.705.701l-1.38 5.534 3.392.846 1.406-5.638c5.787 1.096 10.138.654 11.97-4.582 1.478-4.222-.073-6.657-3.125-8.243 2.223-.513 3.898-1.976 4.346-4.992zm-7.778 10.893c-1.05 4.217-8.15 1.938-10.453 1.366l1.865-7.478c2.303.575 9.664 1.714 8.588 6.112zm1.05-10.95c-.958 3.842-6.87 1.89-8.784 1.413l1.691-6.78c1.914.478 8.067 1.37 7.093 5.367z" fill="#FFF"/></svg>`
+    },
+    {
+      id: 'eth',
+      name: 'Ethereum',
+      symbol: 'ETH',
+      network: 'Sieć Ethereum (ERC20)',
+      address: '0x3161ebA2EA675BD34Dcc3a3c31F95B15498CaaD9',
+      icon: `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#627EEA"/><path d="M16 4v8.87l7.48 3.35z" fill="#FFF" fill-opacity=".6"/><path d="M16 4L8.52 16.22 16 12.87z" fill="#FFF"/><path d="M16 21.96v6.04l7.5-10.35z" fill="#FFF" fill-opacity=".6"/><path d="M16 28v-6.04L8.52 17.65z" fill="#FFF"/><path d="M16 20.57l7.48-4.35L16 12.87z" fill="#FFF" fill-opacity=".2"/><path d="M8.52 16.22l7.48 4.35v-7.7z" fill="#FFF" fill-opacity=".6"/></svg>`
+    },
+    {
+      id: 'sol',
+      name: 'Solana',
+      symbol: 'SOL',
+      network: 'Sieć Solana (SOL)',
+      address: 'A8oRsgM9dMtSU8pB1E7RHKfWgdpnAfsPZKwoKN8VmBD1',
+      icon: `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#000"/><path d="M8.5 21.2a.6.6 0 01.4-.2h14.7c.3 0 .5.4.3.7l-2.4 2.4a.6.6 0 01-.4.2H6.4a.5.5 0 01-.3-.7l2.4-2.4zm0-10.4a.6.6 0 01.4-.2h14.7c.3 0 .5.4.3.7l-2.4 2.4a.6.6 0 01-.4.2H6.4a.5.5 0 01-.3-.7l2.4-2.4zm14.6 5.2a.6.6 0 00-.4-.2H8a.5.5 0 00-.3.7l2.4 2.4c.1.1.3.2.4.2h14.7c.3 0 .5-.4.3-.7l-2.4-2.4z" fill="url(#solG)"/><defs><linearGradient id="solG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00FFA3"/><stop offset="100%" stop-color="#DC1FFF"/></linearGradient></defs></svg>`
+    },
+    {
+      id: 'xrp',
+      name: 'XRP',
+      symbol: 'XRP',
+      network: 'Sieć Ripple (XRP)',
+      address: 'rKukG3tY8WkzaEKuMXhTPcgjoyphJq2afV',
+      icon: `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#23292F"/><path d="M22.7 8h2.3l-5.6 5.6c-1.8 1.8-4.8 1.8-6.7 0L7 8h2.3l4.5 4.5c1.2 1.2 3.1 1.2 4.3 0L22.7 8zm-13.4 16H7l5.6-5.6c1.8-1.8 4.8-1.8 6.7 0l5.7 5.6h-2.3l-4.5-4.5c-1.2-1.2-3.1-1.2-4.3 0L9.3 24z" fill="#FFF"/></svg>`
+    },
+    {
+      id: 'ltc',
+      name: 'Litecoin',
+      symbol: 'LTC',
+      network: 'Sieć Litecoin (LTC)',
+      address: 'ltc1qx4e7cdtkj3pfh4fkcz6trater9u7dxee4y5hgf',
+      icon: `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#345D9D"/><path d="M15.3 7.5l-2.5 9.7-1.8.7-.6 2.3 2.1-.8-1.2 4.7h11l1.1-4.2H15.6l1.2-4.7 1.8-.7.6-2.3-2.1.8 1.4-5.5h-3.2z" fill="#FFF"/></svg>`
+    }
+  ];
+
+  let activeIndex = 0;
+
+  // Obsługa motywów i localStorage
+  const themeToggle = document.getElementById('theme-toggle');
+  const savedTheme = localStorage.getItem('crypto_theme') || 'dark';
+
+  function setTheme(theme) {
+    if (theme === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+      themeToggle.innerHTML = '☀️ Jasny';
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+      themeToggle.innerHTML = '🌙 Ciemny';
+    }
+    localStorage.setItem('crypto_theme', theme);
+  }
+
+  themeToggle.onclick = () => {
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    setTheme(isLight ? 'dark' : 'light');
+  };
+
+  setTheme(savedTheme);
+
+  // Renderowanie przycisków
+  function renderButtons() {
+    const selector = document.getElementById('selector');
+    selector.innerHTML = '';
+    
+    cryptos.forEach((crypto, index) => {
+      const btn = document.createElement('button');
+      btn.className = `crypto-btn ${index === activeIndex ? 'active' : ''}`;
+      btn.innerHTML = `${crypto.icon}<span>${crypto.name}</span>`;
+      btn.onclick = () => selectCrypto(index);
+      selector.appendChild(btn);
+    });
+  }
+
+  function selectCrypto(index) {
+    activeIndex = index;
+    renderButtons();
+    
+    const crypto = cryptos[activeIndex];
+    document.getElementById('crypto-icon').innerHTML = crypto.icon;
+    document.getElementById('crypto-name').innerText = crypto.name;
+    document.getElementById('crypto-symbol').innerText = crypto.symbol;
+    document.getElementById('network-text').innerText = `Wysyłaj tylko przez: ${crypto.network}`;
+    document.getElementById('address-text').innerText = crypto.address;
+
+    const qrContainer = document.getElementById('qrcode');
+    qrContainer.innerHTML = '';
+    
+    new QRCode(qrContainer, {
+      text: crypto.address,
+      width: 170,
+      height: 170,
+      colorDark: "#000000",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.H
+    });
+  }
+
+  // Kopiowanie
+  document.getElementById('copy-btn').onclick = () => {
+    const address = cryptos[activeIndex].address;
+    navigator.clipboard.writeText(address).then(() => {
+      const btn = document.getElementById('copy-btn');
+      btn.innerText = 'Skopiowano!';
+      btn.style.background = '#16a34a';
+      setTimeout(() => {
+        btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Kopiuj`;
+        btn.style.background = '#4338ca';
+      }, 2000);
+    });
+  };
+
+  // Obsługa okna instrukcji (Modal)
+  const helpModal = document.getElementById('help-modal');
+  document.getElementById('help-btn').onclick = () => helpModal.classList.add('open');
+  document.getElementById('close-modal').onclick = () => helpModal.classList.remove('open');
+  helpModal.onclick = (e) => { if (e.target === helpModal) helpModal.classList.remove('open'); };
+
+  selectCrypto(0);
+</script>
+
+</body>
+</html>
