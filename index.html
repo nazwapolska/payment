@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Płatność Kryptowalutami</title>
+  <title>Krypto Portal - Płatności i Odbiór</title>
   <!-- Biblioteka do generowania kodów QR -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
-    /* Domyślny ciemny motyw */
+    /* Zmienne dla motywu ciemnego (domyślne) */
     :root {
       --bg-color: #0b0e14;
       --card-bg: #121824;
@@ -24,7 +24,7 @@
       --modal-card: #121824;
     }
 
-    /* Motyw jasny */
+    /* Zmienne dla motywu jasnego */
     [data-theme="light"] {
       --bg-color: #f8fafc;
       --card-bg: #ffffff;
@@ -32,7 +32,7 @@
       --button-bg: #f1f5f9;
       --button-hover: #e2e8f0;
       --accent-color: #4f46e5;
-      --accent-glow: rgba(79, 70, 229, 0.15);
+      --accent-glow: rgba(79, 70, 229, 0.2);
       --text-main: #0f172a;
       --text-muted: #64748b;
       --badge-bg: #e2e8f0;
@@ -46,7 +46,7 @@
       margin: 0;
       padding: 0;
       font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
-      transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+      transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
     }
 
     body {
@@ -56,7 +56,7 @@
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      padding: 16px;
+      padding: 20px;
     }
 
     .container {
@@ -64,14 +64,63 @@
       max-width: 800px;
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 20px;
     }
 
-    .header-bar {
+    /* Pasek nawigacji głównej (Wybór trybu + Motyw) */
+    .top-nav {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
     }
+
+    .mode-switch {
+      display: flex;
+      background: var(--button-bg);
+      border: 1px solid var(--card-border);
+      padding: 4px;
+      border-radius: 12px;
+      gap: 4px;
+    }
+
+    .mode-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .mode-btn.active {
+      background: var(--accent-color);
+      color: white;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .action-btn {
+      background: var(--button-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .action-btn:hover { background: var(--button-hover); }
 
     .section-title {
       font-size: 13px;
@@ -82,31 +131,7 @@
       margin-left: 4px;
     }
 
-    .controls-group {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .pill-btn {
-      background: var(--button-bg);
-      border: 1px solid var(--card-border);
-      color: var(--text-main);
-      padding: 6px 12px;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .pill-btn:hover {
-      background: var(--button-hover);
-    }
-
-    /* Wybór kryptowalut */
+    /* Przełączniki kryptowalut */
     .crypto-selector {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
@@ -137,15 +162,8 @@
       box-shadow: 0 0 15px var(--accent-glow);
     }
 
-    .crypto-btn svg {
-      width: 38px;
-      height: 38px;
-    }
-
-    .crypto-btn span {
-      font-size: 14px;
-      font-weight: 600;
-    }
+    .crypto-btn svg { width: 38px; height: 38px; }
+    .crypto-btn span { font-size: 14px; font-weight: 600; }
 
     /* Główna karta */
     .main-card {
@@ -153,10 +171,14 @@
       border: 1px solid var(--card-border);
       border-radius: 20px;
       padding: 32px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
+    }
+
+    /* TRYB 1: PŁATNOŚĆ (QR + Adres) */
+    .pay-view {
       display: flex;
       gap: 36px;
       align-items: center;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
     }
 
     .qr-section {
@@ -188,31 +210,14 @@
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 20px;
     }
 
-    .header-info {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .header-info svg {
-      width: 42px;
-      height: 42px;
-    }
-
-    .crypto-title-group {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .crypto-name {
-      font-size: 26px;
-      font-weight: 700;
-    }
-
+    .header-info { display: flex; align-items: center; gap: 12px; }
+    .header-info svg { width: 42px; height: 42px; }
+    .crypto-title-group { display: flex; align-items: center; gap: 10px; }
+    .crypto-name { font-size: 26px; font-weight: 700; }
+    
     .crypto-symbol {
       background: var(--badge-bg);
       color: var(--text-muted);
@@ -235,17 +240,8 @@
       gap: 8px;
     }
 
-    .address-group {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .address-label {
-      font-size: 13px;
-      color: var(--text-muted);
-      font-weight: 500;
-    }
+    .address-group { display: flex; flex-direction: column; gap: 8px; }
+    .address-label { font-size: 13px; color: var(--text-muted); font-weight: 500; }
 
     .address-box {
       display: flex;
@@ -258,12 +254,7 @@
       gap: 10px;
     }
 
-    .address-text {
-      font-family: monospace;
-      font-size: 14px;
-      color: var(--text-main);
-      word-break: break-all;
-    }
+    .address-text { font-family: monospace; font-size: 14px; color: var(--text-main); word-break: break-all; }
 
     .copy-btn {
       background: #4338ca;
@@ -278,263 +269,200 @@
       gap: 6px;
       white-space: nowrap;
     }
+    .copy-btn:hover { background: #3730a3; }
 
-    .copy-btn:hover {
-      background: #3730a3;
+    /* TRYB 2: ODBIÓR (Formularz) */
+    .claim-view {
+      display: none;
+      flex-direction: column;
+      gap: 20px;
     }
 
-    /* Przycisk instrukcji bez podkreślenia */
-    .help-link-btn {
-      background: none;
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { font-size: 13px; color: var(--text-muted); font-weight: 600; }
+    
+    .form-group input {
+      background: var(--input-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      outline: none;
+    }
+    .form-group input:focus { border-color: var(--accent-color); }
+
+    .submit-btn {
+      background: var(--accent-color);
+      color: white;
       border: none;
-      color: var(--text-muted);
-      font-size: 13px;
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
       cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 2px 0;
-      align-self: flex-start;
-      text-decoration: none;
+      margin-top: 10px;
     }
+    .submit-btn:hover { opacity: 0.9; }
 
-    .help-link-btn:hover {
-      color: var(--accent-color);
-    }
+    .status-msg { font-size: 14px; text-align: center; display: none; }
+    .status-msg.success { color: #22c55e; }
+    .status-msg.error { color: #ef4444; }
 
     /* Modal */
     .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: var(--modal-bg);
-      backdrop-filter: blur(4px);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      z-index: 100;
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--modal-bg); backdrop-filter: blur(4px);
+      display: none; justify-content: center; align-items: center; padding: 20px; z-index: 100;
     }
-
-    .modal-overlay.open {
-      display: flex;
-    }
+    .modal-overlay.open { display: flex; }
 
     .modal-content {
-      background: var(--modal-card);
-      border: 1px solid var(--card-border);
-      border-radius: 20px;
-      max-width: 480px;
-      width: 100%;
-      padding: 28px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+      background: var(--modal-card); border: 1px solid var(--card-border);
+      border-radius: 20px; max-width: 500px; width: 100%; padding: 28px;
+      display: flex; flex-direction: column; gap: 20px;
     }
 
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; }
+    .modal-title { font-size: 20px; font-weight: 700; }
+    .close-btn { background: none; border: none; color: var(--text-muted); font-size: 24px; cursor: pointer; }
 
-    .modal-title {
-      font-size: 18px;
-      font-weight: 700;
-    }
-
-    .close-btn {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      font-size: 24px;
-      cursor: pointer;
-    }
-
-    .instruction-steps {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    .step-item {
-      display: flex;
-      gap: 12px;
-      align-items: flex-start;
-    }
-
+    .instruction-steps { display: flex; flex-direction: column; gap: 14px; }
+    .step-item { display: flex; gap: 12px; align-items: flex-start; }
     .step-number {
-      background: var(--accent-color);
-      color: white;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 700;
-      flex-shrink: 0;
+      background: var(--accent-color); color: white; width: 26px; height: 26px;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; flex-shrink: 0;
     }
-
-    .step-text {
-      font-size: 14px;
-      line-height: 1.5;
-      color: var(--text-main);
-    }
+    .step-text { font-size: 14px; line-height: 1.5; color: var(--text-main); }
 
     @media (max-width: 650px) {
-      .crypto-selector {
-        grid-template-columns: repeat(3, 1fr);
-      }
-      .main-card {
-        flex-direction: column;
-        padding: 20px;
-        gap: 24px;
-      }
-      .address-box {
-        flex-direction: column;
-        align-items: stretch;
-        padding: 12px;
-        gap: 12px;
-      }
-      .address-text {
-        text-align: center;
-      }
-      .copy-btn {
-        justify-content: center;
-        width: 100%;
-      }
-      .help-link-btn {
-        align-self: center;
-      }
+      .crypto-selector { grid-template-columns: repeat(3, 1fr); }
+      .pay-view { flex-direction: column; }
     }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <div class="header-bar">
-    <div class="section-title" id="t-select-currency">WYBIERZ KRYPTOWALUTĘ</div>
-    <div class="controls-group">
-      <button class="pill-btn" id="lang-toggle">EN</button>
-      <button class="pill-btn" id="theme-toggle">Light</button>
+  <!-- Pasek górny: Wybór opcji + Motyw -->
+  <div class="top-nav">
+    <div class="mode-switch">
+      <button class="mode-btn active" id="mode-pay-btn">💸 Wpłać krypto</button>
+      <button class="mode-btn" id="mode-claim-btn">🎁 Odbierz krypto</button>
+    </div>
+
+    <div class="top-actions">
+      <button class="action-btn" id="help-btn">❓ Jak to działa?</button>
+      <button class="action-btn" id="theme-toggle">🌙 Motyw</button>
     </div>
   </div>
 
+  <div class="section-title">WYBIERZ WALUTĘ:</div>
+
+  <!-- Przełączniki kryptowalut -->
   <div class="crypto-selector" id="selector"></div>
 
+  <!-- Główna karta zmienna w zależności od trybu -->
   <div class="main-card">
-    <div class="qr-section">
-      <div class="qr-container" id="qrcode"></div>
-      <div class="qr-label">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-        <span id="t-scan-label">Zeskanuj aplikacją portfela</span>
+    
+    <!-- WIDOK 1: Wpłata (QR + Adres) -->
+    <div class="pay-view" id="pay-view">
+      <div class="qr-section">
+        <div class="qr-container" id="qrcode"></div>
+        <div class="qr-label">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Zeskanuj aplikacją portfela
+        </div>
+      </div>
+
+      <div class="details-section">
+        <div class="header-info">
+          <div class="crypto-icon-placeholder"></div>
+          <div class="crypto-title-group">
+            <span class="crypto-name">Bitcoin</span>
+            <span class="crypto-symbol">BTC</span>
+          </div>
+        </div>
+
+        <div class="network-warning">
+          <span>ℹ</span>
+          <span class="network-text">Wysyłaj tylko przez: Sieć Bitcoin (BTC)</span>
+        </div>
+
+        <div class="address-group">
+          <div class="address-label">Adres portfela do wpłaty:</div>
+          <div class="address-box">
+            <span class="address-text">...</span>
+            <button class="copy-btn" id="copy-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              Kopiuj
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="details-section">
+    <!-- WIDOK 2: Odbiór (Formularz zgłoszeniowy) -->
+    <form class="claim-view" id="claim-view">
       <div class="header-info">
-        <div id="crypto-icon"></div>
+        <div class="crypto-icon-placeholder"></div>
         <div class="crypto-title-group">
-          <span class="crypto-name" id="crypto-name">Bitcoin</span>
-          <span class="crypto-symbol" id="crypto-symbol">BTC</span>
+          <span class="crypto-name">Bitcoin</span>
+          <span class="crypto-symbol">BTC</span>
         </div>
       </div>
 
       <div class="network-warning">
         <span>ℹ</span>
-        <span id="network-text">Wysyłaj tylko przez: Sieć Bitcoin (BTC)</span>
+        <span class="network-text">Podaj swój adres zgodny z siecią!</span>
       </div>
 
-      <div class="address-group">
-        <div class="address-label" id="t-wallet-label">Adres portfela:</div>
-        <div class="address-box">
-          <span class="address-text" id="address-text">...</span>
-          <button class="copy-btn" id="copy-btn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-            <span id="t-copy-btn">Kopiuj</span>
-          </button>
-        </div>
+      <div class="form-group">
+        <label for="user-name">Twoje Imię / Nick / Identifikator:</label>
+        <input type="text" id="user-name" placeholder="np. Piotrek" required>
       </div>
 
-      <button class="help-link-btn" id="help-btn">
-        <span id="t-help-btn">Jak wysłać środki?</span>
-      </button>
-    </div>
+      <div class="form-group">
+        <label for="user-amount">Uzgodniona kwota do odbioru (opcjonalnie):</label>
+        <input type="text" id="user-amount" placeholder="np. 0.5 SOL lub 50 USD">
+      </div>
+
+      <div class="form-group">
+        <label for="user-address">Twój Adres Portfela (gdzie przelać środki):</label>
+        <input type="text" id="user-address" placeholder="Wklej tutaj swój adres portfela" required>
+      </div>
+
+      <button type="submit" class="submit-btn" id="claim-submit-btn">Wyślij wniosek o wypłatę</button>
+      <div class="status-msg" id="status-msg"></div>
+    </form>
+
   </div>
 </div>
 
+<!-- Modal Instrukcji -->
 <div class="modal-overlay" id="help-modal">
   <div class="modal-content">
     <div class="modal-header">
-      <div class="modal-title" id="t-modal-title">Jak dokonać płatności?</div>
+      <div class="modal-title" id="modal-title">Jak wykonać płatność?</div>
       <button class="close-btn" id="close-modal">&times;</button>
     </div>
-    <div class="instruction-steps">
-      <div class="step-item">
-        <div class="step-number">1</div>
-        <div class="step-text" id="t-step-1">Otwórz aplikację giełdy lub portfela kryptowalutowego (np. Binance, Trust Wallet, MetaMask).</div>
-      </div>
-      <div class="step-item">
-        <div class="step-number">2</div>
-        <div class="step-text" id="t-step-2">Przejdź do zakładki <strong>Wypłać / Wyślij (Send / Withdraw)</strong>.</div>
-      </div>
-      <div class="step-item">
-        <div class="step-number">3</div>
-        <div class="step-text" id="t-step-3">Zeskanuj podany kod QR lub skopiuj i wklej adres portfela.</div>
-      </div>
-      <div class="step-item">
-        <div class="step-number">4</div>
-        <div class="step-text" id="t-step-4"><strong>Ważne:</strong> Wybierz odpowiednią sieć podaną w ostrzeżeniu, aby transakcja dotarła bezpiecznie.</div>
-      </div>
-    </div>
+    <div class="instruction-steps" id="modal-steps"></div>
   </div>
 </div>
 
 <script>
-  // Tłumaczenia Językowe (PL domyślny)
-  const i18n = {
-    pl: {
-      selectCurrency: "WYBIERZ KRYPTOWALUTĘ",
-      scanLabel: "Zeskanuj aplikacją portfela",
-      walletLabel: "Adres portfela:",
-      copy: "Kopiuj",
-      copied: "Skopiowano!",
-      helpBtn: "Jak wysłać środki?",
-      modalTitle: "Jak dokonać płatności?",
-      step1: "Otwórz aplikację giełdy lub portfela kryptowalutowego (np. Binance, Trust Wallet, MetaMask).",
-      step2: "Przejdź do zakładki <strong>Wypłać / Wyślij (Send / Withdraw)</strong>.",
-      step3: "Zeskanuj podany kod QR lub skopiuj i wklej adres portfela.",
-      step4: "<strong>Ważne:</strong> Wybierz odpowiednią sieć podaną w ostrzeżeniu, aby transakcja dotarła bezpiecznie.",
-      networkPrefix: "Wysyłaj tylko przez: "
-    },
-    en: {
-      selectCurrency: "SELECT CRYPTOCURRENCY",
-      scanLabel: "Scan with wallet app",
-      walletLabel: "Wallet Address:",
-      copy: "Copy",
-      copied: "Copied!",
-      helpBtn: "How to send funds?",
-      modalTitle: "How to make a payment?",
-      step1: "Open your crypto exchange or wallet app (e.g. Binance, Trust Wallet, MetaMask).",
-      step2: "Navigate to the <strong>Send / Withdraw</strong> section.",
-      step3: "Scan the QR code above or copy and paste the wallet address.",
-      step4: "<strong>Important:</strong> Make sure to select the correct network specified in the warning message.",
-      networkPrefix: "Send only via: "
-    }
-  };
+  // DANE BOTA TELEGRAM
+  const TELEGRAM_BOT_TOKEN = "8930272100:AAF_dV1SKrQX-LxvQPQZchxxBy0Rjma4JK0";
+  const TELEGRAM_CHAT_ID = "7157683909";
 
+  // Dane kryptowalut
   const cryptos = [
     {
       id: 'btc',
       name: 'Bitcoin',
       symbol: 'BTC',
-      networkEN: 'Bitcoin Network (BTC)',
-      networkPL: 'Sieć Bitcoin (BTC)',
+      network: 'Sieć Bitcoin (BTC)',
       address: 'bc1qm6w0t38sm9mh63dusqe3zx2pmfhpnp86jz4znk',
       icon: `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#F7931A"/><path d="M46.101 26.314c.616-4.116-2.52-6.33-6.806-7.808l1.39-5.574-3.391-.846-1.352 5.424c-.891-.222-1.808-.433-2.722-.64l1.362-5.46-3.392-.846-1.39 5.573c-.739-.168-1.463-.336-2.164-.512l.004-.018-4.678-1.168-.903 3.623s2.518.577 2.465.613c1.375.343 1.624 1.253 1.582 1.975l-1.586 6.357c.095.024.218.059.353.113-.114-.028-.242-.058-.371-.09l-2.222 8.91c-.168.416-.596 1.042-1.558.803.035.05-2.465-.615-2.465-.615l-1.685 3.886 4.415 1.101c.821.205 1.625.42 2.417.625l-1.405 5.637 3.39.846 1.39-5.573c.926.251 1.824.482 2.705.701l-1.38 5.534 3.392.846 1.406-5.638c5.787 1.096 10.138.654 11.97-4.582 1.478-4.222-.073-6.657-3.125-8.243 2.223-.513 3.898-1.976 4.346-4.992zm-7.778 10.893c-1.05 4.217-8.15 1.938-10.453 1.366l1.865-7.478c2.303.575 9.664 1.714 8.588 6.112zm1.05-10.95c-.958 3.842-6.87 1.89-8.784 1.413l1.691-6.78c1.914.478 8.067 1.37 7.093 5.367z" fill="#FFF"/></svg>`
     },
@@ -542,8 +470,7 @@
       id: 'eth',
       name: 'Ethereum',
       symbol: 'ETH',
-      networkEN: 'Ethereum Network (ERC20)',
-      networkPL: 'Sieć Ethereum (ERC20)',
+      network: 'Sieć Ethereum (ERC20)',
       address: '0x3161ebA2EA675BD34Dcc3a3c31F95B15498CaaD9',
       icon: `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#627EEA"/><path d="M16 4v8.87l7.48 3.35z" fill="#FFF" fill-opacity=".6"/><path d="M16 4L8.52 16.22 16 12.87z" fill="#FFF"/><path d="M16 21.96v6.04l7.5-10.35z" fill="#FFF" fill-opacity=".6"/><path d="M16 28v-6.04L8.52 17.65z" fill="#FFF"/><path d="M16 20.57l7.48-4.35L16 12.87z" fill="#FFF" fill-opacity=".2"/><path d="M8.52 16.22l7.48 4.35v-7.7z" fill="#FFF" fill-opacity=".6"/></svg>`
     },
@@ -551,8 +478,7 @@
       id: 'sol',
       name: 'Solana',
       symbol: 'SOL',
-      networkEN: 'Solana Network (SOL)',
-      networkPL: 'Sieć Solana (SOL)',
+      network: 'Sieć Solana (SOL)',
       address: 'A8oRsgM9dMtSU8pB1E7RHKfWgdpnAfsPZKwoKN8VmBD1',
       icon: `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#000"/><path d="M8.5 21.2a.6.6 0 01.4-.2h14.7c.3 0 .5.4.3.7l-2.4 2.4a.6.6 0 01-.4.2H6.4a.5.5 0 01-.3-.7l2.4-2.4zm0-10.4a.6.6 0 01.4-.2h14.7c.3 0 .5.4.3.7l-2.4 2.4a.6.6 0 01-.4.2H6.4a.5.5 0 01-.3-.7l2.4-2.4zm14.6 5.2a.6.6 0 00-.4-.2H8a.5.5 0 00-.3.7l2.4 2.4c.1.1.3.2.4.2h14.7c.3 0 .5-.4.3-.7l-2.4-2.4z" fill="url(#solG)"/><defs><linearGradient id="solG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00FFA3"/><stop offset="100%" stop-color="#DC1FFF"/></linearGradient></defs></svg>`
     },
@@ -560,8 +486,7 @@
       id: 'xrp',
       name: 'XRP',
       symbol: 'XRP',
-      networkEN: 'Ripple Network (XRP)',
-      networkPL: 'Sieć Ripple (XRP)',
+      network: 'Sieć Ripple (XRP)',
       address: 'rKukG3tY8WkzaEKuMXhTPcgjoyphJq2afV',
       icon: `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#23292F"/><path d="M22.7 8h2.3l-5.6 5.6c-1.8 1.8-4.8 1.8-6.7 0L7 8h2.3l4.5 4.5c1.2 1.2 3.1 1.2 4.3 0L22.7 8zm-13.4 16H7l5.6-5.6c1.8-1.8 4.8-1.8 6.7 0l5.7 5.6h-2.3l-4.5-4.5c-1.2-1.2-3.1-1.2-4.3 0L9.3 24z" fill="#FFF"/></svg>`
     },
@@ -569,61 +494,62 @@
       id: 'ltc',
       name: 'Litecoin',
       symbol: 'LTC',
-      networkEN: 'Litecoin Network (LTC)',
-      networkPL: 'Sieć Litecoin (LTC)',
+      network: 'Sieć Litecoin (LTC)',
       address: 'ltc1qx4e7cdtkj3pfh4fkcz6trater9u7dxee4y5hgf',
       icon: `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#345D9D"/><path d="M15.3 7.5l-2.5 9.7-1.8.7-.6 2.3 2.1-.8-1.2 4.7h11l1.1-4.2H15.6l1.2-4.7 1.8-.7.6-2.3-2.1.8 1.4-5.5h-3.2z" fill="#FFF"/></svg>`
     }
   ];
 
   let activeIndex = 0;
-  let currentLang = 'pl'; // PL domyślny
+  let currentMode = 'pay'; // 'pay' lub 'claim'
 
-  // Domyślny Motyw Ciemny
+  // Obsługa motywów
   const themeToggle = document.getElementById('theme-toggle');
-  let currentTheme = 'dark';
+  const savedTheme = localStorage.getItem('crypto_theme') || 'dark';
 
   function setTheme(theme) {
-    currentTheme = theme;
     if (theme === 'light') {
       document.documentElement.setAttribute('data-theme', 'light');
-      themeToggle.innerText = 'Dark';
+      themeToggle.innerHTML = '☀️ Jasny';
     } else {
       document.documentElement.removeAttribute('data-theme');
-      themeToggle.innerText = 'Light';
+      themeToggle.innerHTML = '🌙 Ciemny';
     }
+    localStorage.setItem('crypto_theme', theme);
   }
 
   themeToggle.onclick = () => {
-    setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    setTheme(isLight ? 'dark' : 'light');
   };
+  setTheme(savedTheme);
 
-  // Przełączanie języka
-  const langToggle = document.getElementById('lang-toggle');
-  
-  function updateLanguage(lang) {
-    currentLang = lang;
-    langToggle.innerText = lang === 'pl' ? 'EN' : 'PL';
-    
-    const t = i18n[lang];
-    document.getElementById('t-select-currency').innerText = t.selectCurrency;
-    document.getElementById('t-scan-label').innerText = t.scanLabel;
-    document.getElementById('t-wallet-label').innerText = t.walletLabel;
-    document.getElementById('t-copy-btn').innerText = t.copy;
-    document.getElementById('t-help-btn').innerText = t.helpBtn;
-    document.getElementById('t-modal-title').innerText = t.modalTitle;
-    document.getElementById('t-step-1').innerHTML = t.step1;
-    document.getElementById('t-step-2').innerHTML = t.step2;
-    document.getElementById('t-step-3').innerHTML = t.step3;
-    document.getElementById('t-step-4').innerHTML = t.step4;
+  // Przełączanie trybów (Wpłać / Odbierz)
+  const modePayBtn = document.getElementById('mode-pay-btn');
+  const modeClaimBtn = document.getElementById('mode-claim-btn');
+  const payView = document.getElementById('pay-view');
+  const claimView = document.getElementById('claim-view');
 
-    selectCrypto(activeIndex);
+  modePayBtn.onclick = () => switchMode('pay');
+  modeClaimBtn.onclick = () => switchMode('claim');
+
+  function switchMode(mode) {
+    currentMode = mode;
+    if (mode === 'pay') {
+      modePayBtn.classList.add('active');
+      modeClaimBtn.classList.remove('active');
+      payView.style.display = 'flex';
+      claimView.style.display = 'none';
+    } else {
+      modeClaimBtn.classList.add('active');
+      modePayBtn.classList.remove('active');
+      payView.style.display = 'none';
+      claimView.style.display = 'flex';
+    }
+    updateUI();
   }
 
-  langToggle.onclick = () => {
-    updateLanguage(currentLang === 'pl' ? 'en' : 'pl');
-  };
-
+  // Renderowanie przycisków walut
   function renderButtons() {
     const selector = document.getElementById('selector');
     selector.innerHTML = '';
@@ -632,62 +558,134 @@
       const btn = document.createElement('button');
       btn.className = `crypto-btn ${index === activeIndex ? 'active' : ''}`;
       btn.innerHTML = `${crypto.icon}<span>${crypto.name}</span>`;
-      btn.onclick = () => selectCrypto(index);
+      btn.onclick = () => {
+        activeIndex = index;
+        renderButtons();
+        updateUI();
+      };
       selector.appendChild(btn);
     });
   }
 
-  function selectCrypto(index) {
-    activeIndex = index;
-    renderButtons();
-    
+  // Aktualizacja danych w UI
+  function updateUI() {
     const crypto = cryptos[activeIndex];
-    const t = i18n[currentLang];
-    
-    document.getElementById('crypto-icon').innerHTML = crypto.icon;
-    document.getElementById('crypto-name').innerText = crypto.name;
-    document.getElementById('crypto-symbol').innerText = crypto.symbol;
-    document.getElementById('network-text').innerText = `${t.networkPrefix}${currentLang === 'pl' ? crypto.networkPL : crypto.networkEN}`;
-    document.getElementById('address-text').innerText = crypto.address;
 
-    const qrContainer = document.getElementById('qrcode');
-    qrContainer.innerHTML = '';
-    
-    new QRCode(qrContainer, {
-      text: crypto.address,
-      width: 170,
-      height: 170,
-      colorDark: "#000000",
-      colorLight: "#ffffff",
-      correctLevel: QRCode.CorrectLevel.H
-    });
+    document.querySelectorAll('.crypto-icon-placeholder').forEach(el => el.innerHTML = crypto.icon);
+    document.querySelectorAll('.crypto-name').forEach(el => el.innerText = crypto.name);
+    document.querySelectorAll('.crypto-symbol').forEach(el => el.innerText = crypto.symbol);
+    document.querySelectorAll('.network-text').forEach(el => el.innerText = `Obsługiwana sieć: ${crypto.network}`);
+
+    if (currentMode === 'pay') {
+      document.querySelector('.address-text').innerText = crypto.address;
+      const qrContainer = document.getElementById('qrcode');
+      qrContainer.innerHTML = '';
+      new QRCode(qrContainer, {
+        text: crypto.address,
+        width: 170,
+        height: 170,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    }
   }
 
   // Kopiowanie adresu
   document.getElementById('copy-btn').onclick = () => {
     const address = cryptos[activeIndex].address;
-    const t = i18n[currentLang];
     navigator.clipboard.writeText(address).then(() => {
-      const btnSpan = document.getElementById('t-copy-btn');
       const btn = document.getElementById('copy-btn');
-      btnSpan.innerText = t.copied;
+      btn.innerText = 'Skopiowano!';
       btn.style.background = '#16a34a';
       setTimeout(() => {
-        btnSpan.innerText = t.copy;
+        btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Kopiuj`;
         btn.style.background = '#4338ca';
       }, 2000);
     });
   };
 
-  // Instrukcja
+  // Wysyłanie formularza ODBIORU na Telegram
+  document.getElementById('claim-view').onsubmit = async (e) => {
+    e.preventDefault();
+    
+    const crypto = cryptos[activeIndex];
+    const name = document.getElementById('user-name').value;
+    const amount = document.getElementById('user-amount').value || 'Nie podano';
+    const address = document.getElementById('user-address').value;
+    const statusMsg = document.getElementById('status-msg');
+    const btn = document.getElementById('claim-submit-btn');
+
+    btn.disabled = true;
+    btn.innerText = 'Wysyłanie...';
+
+    const text = `📥 *NOWE ZGŁOSZENIE O KRIPTO!*\n\n` +
+                 `👤 *Odbiorca:* ${name}\n` +
+                 `🪙 *Waluta:* ${crypto.name} (${crypto.symbol})\n` +
+                 `💰 *Kwota:* ${amount}\n` +
+                 `📫 *Adres portfela:*\n\`${address}\``;
+
+    try {
+      const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: TELEGRAM_CHAT_ID,
+          text: text,
+          parse_mode: 'Markdown'
+        })
+      });
+
+      if (res.ok) {
+        statusMsg.className = 'status-msg success';
+        statusMsg.innerText = '✅ Zgłoszenie wysłane! Oczekuj na przelanie środków.';
+        statusMsg.style.display = 'block';
+        document.getElementById('claim-view').reset();
+      } else {
+        throw new Error();
+      }
+    } catch (err) {
+      statusMsg.className = 'status-msg error';
+      statusMsg.innerText = '❌ Błąd wysyłania. Upewnij się, że kliknąłeś START na botcie.';
+      statusMsg.style.display = 'block';
+    } finally {
+      btn.disabled = false;
+      btn.innerText = 'Wyślij wniosek o wypłatę';
+    }
+  };
+
+  // Modal Instrukcji
   const helpModal = document.getElementById('help-modal');
-  document.getElementById('help-btn').onclick = () => helpModal.classList.add('open');
+  document.getElementById('help-btn').onclick = () => {
+    const modalTitle = document.getElementById('modal-title');
+    const modalSteps = document.getElementById('modal-steps');
+
+    if (currentMode === 'pay') {
+      modalTitle.innerText = "Jak wykonać wpłatę?";
+      modalSteps.innerHTML = `
+        <div class="step-item"><div class="step-number">1</div><div class="step-text">Otwórz swój portfel lub giełdę (np. Binance, Trust Wallet).</div></div>
+        <div class="step-item"><div class="step-number">2</div><div class="step-text">Wybierz opcję <strong>Wysłyj / Wypłać (Send / Withdraw)</strong>.</div></div>
+        <div class="step-item"><div class="step-number">3</div><div class="step-text">Zeskanuj kod QR lub skopiuj podany adres portfela.</div></div>
+        <div class="step-item"><div class="step-number">4</div><div class="step-text"><strong>Ważne:</strong> Upewnij się, że wybierasz właściwą sieć transakcji.</div></div>
+      `;
+    } else {
+      modalTitle.innerText = "Jak odebrać krypto?";
+      modalSteps.innerHTML = `
+        <div class="step-item"><div class="step-number">1</div><div class="step-text">Wybierz kryptowalutę z listy na górze.</div></div>
+        <div class="step-item"><div class="step-number">2</div><div class="step-text">Otwórz swój portfel i skopiuj <strong>Twój własny adres</strong> odbiorczy danej waluty.</div></div>
+        <div class="step-item"><div class="step-number">3</div><div class="step-text">Wklej go w formularzu, podaj swoje imię/nick i kliknij <strong>Wyślij wniosek</strong>.</div></div>
+        <div class="step-item"><div class="step-number">4</div><div class="step-text">Otrzymasz przelew, gdy wniosek zostanie przetworzony.</div></div>
+      `;
+    }
+    helpModal.classList.add('open');
+  };
+
   document.getElementById('close-modal').onclick = () => helpModal.classList.remove('open');
   helpModal.onclick = (e) => { if (e.target === helpModal) helpModal.classList.remove('open'); };
 
-  // Start w ciemnym motywie i po polsku
-  setTheme('dark');
-  updateLanguage('pl');
+  // Start
+  renderButtons();
+  switchMode('pay');
 </script>
 
 </body>
