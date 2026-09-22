@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Krypto Portal - Płatności i Odbiór</title>
-  <!-- Biblioteka do generowania kodów QR -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     :root {
@@ -219,6 +218,8 @@
       justify-content: center;
       align-items: center;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      min-width: 170px;
+      min-height: 170px;
     }
 
     .qr-label { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-muted); }
@@ -306,7 +307,7 @@
     .status-msg.success { color: #22c55e; }
     .status-msg.error { color: #ef4444; }
 
-    /* Modale (Okna wyskakujące) */
+    /* Modale */
     .modal-overlay {
       position: fixed; top: 0; left: 0; right: 0; bottom: 0;
       background: var(--modal-bg); backdrop-filter: blur(4px);
@@ -333,7 +334,6 @@
     }
     .step-text { font-size: 14px; line-height: 1.5; color: var(--text-main); }
 
-    /* Podsumowanie w Modalu Potwierdzenia */
     .confirm-summary {
       background: var(--input-bg);
       border: 1px solid var(--card-border);
@@ -379,7 +379,6 @@
 <body>
 
 <div class="container">
-  <!-- Pasek górny: Wybór opcji + Motyw -->
   <div class="top-nav">
     <div class="mode-switch">
       <button class="mode-btn active" id="mode-pay-btn">💸 Wpłać krypto</button>
@@ -394,13 +393,10 @@
 
   <div class="section-title">WYBIERZ WALUTĘ:</div>
 
-  <!-- Przełączniki kryptowalut -->
   <div class="crypto-selector" id="selector"></div>
 
-  <!-- Główna karta -->
   <div class="main-card">
-    
-    <!-- WIDOK 1: Wpłata (QR + Adres) -->
+    <!-- WIDOK 1: Wpłata -->
     <div class="pay-view" id="pay-view">
       <div class="qr-section">
         <div class="qr-container" id="qrcode"></div>
@@ -441,7 +437,7 @@
       </div>
     </div>
 
-    <!-- WIDOK 2: Odbiór (Formularz zgłoszeniowy) -->
+    <!-- WIDOK 2: Odbiór -->
     <form class="claim-view" id="claim-view">
       <div class="header-info">
         <div class="crypto-icon-placeholder"></div>
@@ -471,8 +467,8 @@
       </div>
 
       <div class="form-group">
-        <label for="user-code">Kod weryfikacyjny / Hasło (uzgodnione wcześniej):</label>
-        <input type="text" id="user-code" placeholder="Wpisz kod, jeśli został Ci podany" required>
+        <label for="user-code">Kod weryfikacyjny / Hasło:</label>
+        <input type="text" id="user-code" required>
       </div>
 
       <div class="form-group">
@@ -487,7 +483,7 @@
   </div>
 </div>
 
-<!-- Modal 1: Instrukcja -->
+<!-- Modal Instrukcji -->
 <div class="modal-overlay" id="help-modal">
   <div class="modal-content">
     <div class="modal-header">
@@ -498,7 +494,7 @@
   </div>
 </div>
 
-<!-- Modal 2: Potwierdzenie Wypłaty i Ostrzeżenie -->
+<!-- Modal Potwierdzenia -->
 <div class="modal-overlay" id="confirm-modal">
   <div class="modal-content">
     <div class="modal-header">
@@ -541,10 +537,9 @@
 </div>
 
 <script>
-  // DANE BOTA TELEGRAM
   const TELEGRAM_BOT_TOKEN = "8930272100:AAF_dV1SKrQX-LxvQPQZchxxBy0Rjma4JK0";
   const TELEGRAM_CHAT_ID = "7157683909";
-  const COOLDOWN_MINUTES = 10; // Czas blokady ponownego wysłania (w minutach)
+  const COOLDOWN_MINUTES = 10;
 
   const cryptos = [
     { id: 'btc', name: 'Bitcoin', symbol: 'BTC', network: 'Sieć Bitcoin (BTC)', address: 'bc1qm6w0t38sm9mh63dusqe3zx2pmfhpnp86jz4znk', icon: `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#F7931A"/><path d="M46.101 26.314c.616-4.116-2.52-6.33-6.806-7.808l1.39-5.574-3.391-.846-1.352 5.424c-.891-.222-1.808-.433-2.722-.64l1.362-5.46-3.392-.846-1.39 5.573c-.739-.168-1.463-.336-2.164-.512l.004-.018-4.678-1.168-.903 3.623s2.518.577 2.465.613c1.375.343 1.624 1.253 1.582 1.975l-1.586 6.357c.095.024.218.059.353.113-.114-.028-.242-.058-.371-.09l-2.222 8.91c-.168.416-.596 1.042-1.558.803.035.05-2.465-.615-2.465-.615l-1.685 3.886 4.415 1.101c.821.205 1.625.42 2.417.625l-1.405 5.637 3.39.846 1.39-5.573c.926.251 1.824.482 2.705.701l-1.38 5.534 3.392.846 1.406-5.638c5.787 1.096 10.138.654 11.97-4.582 1.478-4.222-.073-6.657-3.125-8.243 2.223-.513 3.898-1.976 4.346-4.992zm-7.778 10.893c-1.05 4.217-8.15 1.938-10.453 1.366l1.865-7.478c2.303.575 9.664 1.714 8.588 6.112zm1.05-10.95c-.958 3.842-6.87 1.89-8.784 1.413l1.691-6.78c1.914.478 8.067 1.37 7.093 5.367z" fill="#FFF"/></svg>` },
@@ -557,8 +552,8 @@
   let activeIndex = 0;
   let currentMode = 'pay';
   let cooldownTimer = null;
+  let qrCodeInstance = null;
 
-  // Motywy
   const themeToggle = document.getElementById('theme-toggle');
   const savedTheme = localStorage.getItem('crypto_theme') || 'dark';
 
@@ -579,9 +574,43 @@
   };
   setTheme(savedTheme);
 
-  // Przełączanie sieci
   function toggleNetworkInfo(view) {
-    document.getElementById(`${view}-network-box`).classList.toggle('show');   }    // Przełączanie trybów   const modePayBtn = document.getElementById('mode-pay-btn');   const modeClaimBtn = document.getElementById('mode-claim-btn');   const payView = document.getElementById('pay-view');   const claimView = document.getElementById('claim-view');    modePayBtn.onclick = () => switchMode('pay');   modeClaimBtn.onclick = () => switchMode('claim');    function switchMode(mode) {     currentMode = mode;     document.querySelectorAll('.network-info-box').forEach(el => el.classList.remove('show'));      if (mode === 'pay') {       modePayBtn.classList.add('active');       modeClaimBtn.classList.remove('active');       payView.style.display = 'flex';       claimView.style.display = 'none';     } else {       modeClaimBtn.classList.add('active');       modePayBtn.classList.remove('active');       payView.style.display = 'none';       claimView.style.display = 'flex';     }     updateUI();   }    function renderButtons() {     const selector = document.getElementById('selector');     selector.innerHTML = '';     cryptos.forEach((crypto, index) => {       const btn = document.createElement('button');       btn.className = `crypto-btn ${index === activeIndex ? 'active' : ''}`;
+    document.getElementById(`${view}-network-box`).classList.toggle('show');
+  }
+
+  const modePayBtn = document.getElementById('mode-pay-btn');
+  const modeClaimBtn = document.getElementById('mode-claim-btn');
+  const payView = document.getElementById('pay-view');
+  const claimView = document.getElementById('claim-view');
+
+  modePayBtn.onclick = () => switchMode('pay');
+  modeClaimBtn.onclick = () => switchMode('claim');
+
+  function switchMode(mode) {
+    currentMode = mode;
+    document.querySelectorAll('.network-info-box').forEach(el => el.classList.remove('show'));
+
+    if (mode === 'pay') {
+      modePayBtn.classList.add('active');
+      modeClaimBtn.classList.remove('active');
+      payView.style.display = 'flex';
+      claimView.style.display = 'none';
+    } else {
+      modeClaimBtn.classList.add('active');
+      modePayBtn.classList.remove('active');
+      payView.style.display = 'none';
+      claimView.style.display = 'flex';
+    }
+    updateUI();
+  }
+
+  function renderButtons() {
+    const selector = document.getElementById('selector');
+    selector.innerHTML = '';
+    cryptos.forEach((crypto, index) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = `crypto-btn ${index === activeIndex ? 'active' : ''}`;
       btn.innerHTML = `${crypto.icon}<span>${crypto.name}</span>`;
       btn.onclick = () => {
         activeIndex = index;
@@ -601,16 +630,29 @@
 
     if (currentMode === 'pay') {
       document.querySelector('.address-text').innerText = crypto.address;
-      const qrContainer = document.getElementById('qrcode');
-      qrContainer.innerHTML = '';
-      new QRCode(qrContainer, {
-        text: crypto.address, width: 170, height: 170,
-        colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H
-      });
+      generateQR(crypto.address);
     }
   }
 
-  // Kopiowanie
+  function generateQR(text) {
+    const container = document.getElementById('qrcode');
+    container.innerHTML = '';
+    try {
+      if (typeof QRCode !== 'undefined') {
+        new QRCode(container, {
+          text: text,
+          width: 170,
+          height: 170,
+          colorDark: "#000000",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.H
+        });
+      }
+    } catch(e) {
+      console.log('Błąd generowania QR:', e);
+    }
+  }
+
   document.getElementById('copy-btn').onclick = () => {
     navigator.clipboard.writeText(cryptos[activeIndex].address).then(() => {
       const btn = document.getElementById('copy-btn');
@@ -623,13 +665,11 @@
     });
   };
 
-  // SPRAWDZANIE COOLDOWNU (Limit wysyłania)
   function checkCooldown() {
     const lastSend = localStorage.getItem('last_crypto_claim');
-    const btn = document.getElementById('claim-submit-btn');
     if (!lastSend) return false;
 
-    const elapsed = (Date.now() - parseInt(lastSend)) / 1000 / 60; // w minutach
+    const elapsed = (Date.now() - parseInt(lastSend)) / 1000 / 60;
     if (elapsed < COOLDOWN_MINUTES) {
       const remainingSec = Math.ceil((COOLDOWN_MINUTES * 60) - ((Date.now() - parseInt(lastSend)) / 1000));
       startCooldownTimer(remainingSec);
@@ -657,7 +697,6 @@
     }, 1000);
   }
 
-  // MODAL POTWIERDZENIA WYPŁATY
   const confirmModal = document.getElementById('confirm-modal');
   
   document.getElementById('claim-view').onsubmit = (e) => {
@@ -677,7 +716,6 @@
   document.getElementById('close-confirm-modal').onclick = () => confirmModal.classList.remove('open');
   document.getElementById('cancel-send-btn').onclick = () => confirmModal.classList.remove('open');
 
-  // OSTATECZNE WYSYŁANIE NA TELEGRAM
   document.getElementById('final-send-btn').onclick = async () => {
     confirmModal.classList.remove('open');
     
@@ -695,7 +733,8 @@
     const text = `📥 *NOWE ZGŁOSZENIE O KRIPTO!*\n\n` +
                  `👤 *Odbiorca:* ${name}\n` +
                  `🔑 *Kod weryfikacyjny:* \`${code}\`\n` +
-                 `🪙 *Waluta:* ${crypto.name} (${crypto.symbol})\n` +                  `💰 *Ilość:* ${amount}\n` +
+                 `🪙 *Waluta:* ${crypto.name} (${crypto.symbol})\n` +
+                 `💰 *Ilość:* ${amount}\n` +
                  `📫 *Adres portfela:*\n\`${address}\``;
 
     try {
@@ -715,7 +754,6 @@
         statusMsg.style.display = 'block';
         document.getElementById('claim-view').reset();
         
-        // Zapisanie czasu wysłania w pamięci przeglądarki
         localStorage.setItem('last_crypto_claim', Date.now().toString());
         startCooldownTimer(COOLDOWN_MINUTES * 60);
       } else {
@@ -730,7 +768,6 @@
     }
   };
 
-  // Modal Instrukcji
   const helpModal = document.getElementById('help-modal');
   document.getElementById('help-btn').onclick = () => {
     const modalTitle = document.getElementById('modal-title');
@@ -759,10 +796,12 @@
   document.getElementById('close-modal').onclick = () => helpModal.classList.remove('open');
   helpModal.onclick = (e) => { if (e.target === helpModal) helpModal.classList.remove('open'); };
 
-  // Start
-  renderButtons();
-  switchMode('pay');
-  checkCooldown();
+  // Inicjalizacja
+  window.onload = () => {
+    renderButtons();
+    switchMode('pay');
+    checkCooldown();
+  };
 </script>
 
 </body>
