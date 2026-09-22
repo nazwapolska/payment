@@ -64,7 +64,7 @@
 
     .container {
       width: 100%;
-      max-width: 800px;
+      max-width: 850px;
       display: flex;
       flex-direction: column;
       gap: 20px;
@@ -132,7 +132,7 @@
 
     .crypto-selector {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(6, 1fr);
       gap: 12px;
     }
 
@@ -161,7 +161,7 @@
     }
 
     .crypto-btn svg { width: 38px; height: 38px; }
-    .crypto-btn span { font-size: 14px; font-weight: 600; }
+    .crypto-btn span { font-size: 13px; font-weight: 600; }
 
     .main-card {
       background: var(--card-bg);
@@ -277,6 +277,7 @@
 
     .form-group { display: flex; flex-direction: column; gap: 6px; }
     .form-group label { font-size: 13px; color: var(--text-muted); font-weight: 600; }
+    .field-desc { font-size: 12px; color: var(--text-muted); font-weight: 400; margin-top: -2px; }
     
     .form-group input {
       background: var(--input-bg);
@@ -288,6 +289,16 @@
       outline: none;
     }
     .form-group input:focus { border-color: var(--accent-color); }
+
+    /* FIX NA BIAŁY PASEK AUTOUZUPEŁNIANIA W POLACH TEXTOWYCH */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover, 
+    input:-webkit-autofill:focus, 
+    input:-webkit-autofill:active {
+      -webkit-box-shadow: 0 0 0 30px var(--input-bg) inset !important;
+      -webkit-text-fill-color: var(--text-main) !important;
+      transition: background-color 5000s ease-in-out 0s;
+    }
 
     .submit-btn {
       background: var(--accent-color);
@@ -467,8 +478,9 @@
       </div>
 
       <div class="form-group">
-        <label for="user-code">Kod weryfikacyjny / Hasło:</label>
-        <input type="text" id="user-code" required>
+        <label for="user-code">Hasło (opcjonalnie):</label>
+        <div class="field-desc">Wpisz hasło tylko, jeśli zostałeś o nie poproszony.</div>
+        <input type="text" id="user-code">
       </div>
 
       <div class="form-group">
@@ -516,7 +528,7 @@
         <span class="confirm-summary-val" id="summary-amount">-</span>
       </div>
       <div class="confirm-summary-row">
-        <span class="confirm-summary-label">Kod:</span>
+        <span class="confirm-summary-label">Hasło:</span>
         <span class="confirm-summary-val" id="summary-code">-</span>
       </div>
       <div class="confirm-summary-row" style="flex-direction: column; gap: 4px; margin-top: 6px;">
@@ -539,20 +551,20 @@
 <script>
   const TELEGRAM_BOT_TOKEN = "8930272100:AAF_dV1SKrQX-LxvQPQZchxxBy0Rjma4JK0";
   const TELEGRAM_CHAT_ID = "7157683909";
-  const COOLDOWN_MINUTES = 10;
+  const COOLDOWN_MINUTES = 60; // Zmienna ustawiona na 1 godzinę (60 minut)
 
   const cryptos = [
     { id: 'btc', name: 'Bitcoin', symbol: 'BTC', network: 'Sieć Bitcoin (BTC)', address: 'bc1qm6w0t38sm9mh63dusqe3zx2pmfhpnp86jz4znk', icon: `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#F7931A"/><path d="M46.101 26.314c.616-4.116-2.52-6.33-6.806-7.808l1.39-5.574-3.391-.846-1.352 5.424c-.891-.222-1.808-.433-2.722-.64l1.362-5.46-3.392-.846-1.39 5.573c-.739-.168-1.463-.336-2.164-.512l.004-.018-4.678-1.168-.903 3.623s2.518.577 2.465.613c1.375.343 1.624 1.253 1.582 1.975l-1.586 6.357c.095.024.218.059.353.113-.114-.028-.242-.058-.371-.09l-2.222 8.91c-.168.416-.596 1.042-1.558.803.035.05-2.465-.615-2.465-.615l-1.685 3.886 4.415 1.101c.821.205 1.625.42 2.417.625l-1.405 5.637 3.39.846 1.39-5.573c.926.251 1.824.482 2.705.701l-1.38 5.534 3.392.846 1.406-5.638c5.787 1.096 10.138.654 11.97-4.582 1.478-4.222-.073-6.657-3.125-8.243 2.223-.513 3.898-1.976 4.346-4.992zm-7.778 10.893c-1.05 4.217-8.15 1.938-10.453 1.366l1.865-7.478c2.303.575 9.664 1.714 8.588 6.112zm1.05-10.95c-.958 3.842-6.87 1.89-8.784 1.413l1.691-6.78c1.914.478 8.067 1.37 7.093 5.367z" fill="#FFF"/></svg>` },
     { id: 'eth', name: 'Ethereum', symbol: 'ETH', network: 'Sieć Ethereum (ERC20)', address: '0x3161ebA2EA675BD34Dcc3a3c31F95B15498CaaD9', icon: `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#627EEA"/><path d="M16 4v8.87l7.48 3.35z" fill="#FFF" fill-opacity=".6"/><path d="M16 4L8.52 16.22 16 12.87z" fill="#FFF"/><path d="M16 21.96v6.04l7.5-10.35z" fill="#FFF" fill-opacity=".6"/><path d="M16 28v-6.04L8.52 17.65z" fill="#FFF"/><path d="M16 20.57l7.48-4.35L16 12.87z" fill="#FFF" fill-opacity=".2"/><path d="M8.52 16.22l7.48 4.35v-7.7z" fill="#FFF" fill-opacity=".6"/></svg>` },
     { id: 'sol', name: 'Solana', symbol: 'SOL', network: 'Sieć Solana (SOL)', address: 'A8oRsgM9dMtSU8pB1E7RHKfWgdpnAfsPZKwoKN8VmBD1', icon: `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#000"/><path d="M8.5 21.2a.6.6 0 01.4-.2h14.7c.3 0 .5.4.3.7l-2.4 2.4a.6.6 0 01-.4.2H6.4a.5.5 0 01-.3-.7l2.4-2.4zm0-10.4a.6.6 0 01.4-.2h14.7c.3 0 .5.4.3.7l-2.4 2.4a.6.6 0 01-.4.2H6.4a.5.5 0 01-.3-.7l2.4-2.4zm14.6 5.2a.6.6 0 00-.4-.2H8a.5.5 0 00-.3.7l2.4 2.4c.1.1.3.2.4.2h14.7c.3 0 .5-.4.3-.7l-2.4-2.4z" fill="url(#solG)"/><defs><linearGradient id="solG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00FFA3"/><stop offset="100%" stop-color="#DC1FFF"/></linearGradient></defs></svg>` },
     { id: 'xrp', name: 'XRP', symbol: 'XRP', network: 'Sieć Ripple (XRP)', address: 'rKukG3tY8WkzaEKuMXhTPcgjoyphJq2afV', icon: `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#23292F"/><path d="M22.7 8h2.3l-5.6 5.6c-1.8 1.8-4.8 1.8-6.7 0L7 8h2.3l4.5 4.5c1.2 1.2 3.1 1.2 4.3 0L22.7 8zm-13.4 16H7l5.6-5.6c1.8-1.8 4.8-1.8 6.7 0l5.7 5.6h-2.3l-4.5-4.5c-1.2-1.2-3.1-1.2-4.3 0L9.3 24z" fill="#FFF"/></svg>` },
-    { id: 'ltc', name: 'Litecoin', symbol: 'LTC', network: 'Sieć Litecoin (LTC)', address: 'ltc1qx4e7cdtkj3pfh4fkcz6trater9u7dxee4y5hgf', icon: `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#345D9D"/><path d="M15.3 7.5l-2.5 9.7-1.8.7-.6 2.3 2.1-.8-1.2 4.7h11l1.1-4.2H15.6l1.2-4.7 1.8-.7.6-2.3-2.1.8 1.4-5.5h-3.2z" fill="#FFF"/></svg>` }
+    { id: 'ltc', name: 'Litecoin', symbol: 'LTC', network: 'Sieć Litecoin (LTC)', address: 'ltc1qx4e7cdtkj3pfh4fkcz6trater9u7dxee4y5hgf', icon: `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#345D9D"/><path d="M15.3 7.5l-2.5 9.7-1.8.7-.6 2.3 2.1-.8-1.2 4.7h11l1.1-4.2H15.6l1.2-4.7 1.8-.7.6-2.3-2.1.8 1.4-5.5h-3.2z" fill="#FFF"/></svg>` },
+    { id: 'doge', name: 'Dogecoin', symbol: 'DOGE', network: 'Sieć Dogecoin (DOGE)', address: 'D6Uy1p7VxHvmh5QTr8apxBvvZz76sY2VXH', icon: `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#C2A633"/><rect x="10" y="9" width="12" height="14" rx="3" fill="#FFF"/><path d="M10 11h6c2.5 0 4 1.5 4 5s-1.5 5-4 5h-6V11zm4 3v4h2c1 0 1.5-.5 1.5-2s-.5-2-1.5-2h-2z" fill="#C2A633"/><path d="M8 16h16" stroke="#C2A633" stroke-width="2.5"/></svg>` }
   ];
 
   let activeIndex = 0;
   let currentMode = 'pay';
   let cooldownTimer = null;
-  let qrCodeInstance = null;
 
   const themeToggle = document.getElementById('theme-toggle');
   const savedTheme = localStorage.getItem('crypto_theme') || 'dark';
@@ -704,10 +716,11 @@
     if (checkCooldown()) return;
 
     const crypto = cryptos[activeIndex];
+    const codeVal = document.getElementById('user-code').value.trim();
     document.getElementById('summary-name').innerText = document.getElementById('user-name').value;
     document.getElementById('summary-crypto').innerText = `${crypto.name} (${crypto.symbol})`;
     document.getElementById('summary-amount').innerText = document.getElementById('user-amount').value;
-    document.getElementById('summary-code').innerText = document.getElementById('user-code').value;
+    document.getElementById('summary-code').innerText = codeVal !== '' ? codeVal : 'Brak';
     document.getElementById('summary-address').innerText = document.getElementById('user-address').value;
 
     confirmModal.classList.add('open');
@@ -722,7 +735,8 @@
     const crypto = cryptos[activeIndex];
     const name = document.getElementById('user-name').value;
     const amount = document.getElementById('user-amount').value;
-    const code = document.getElementById('user-code').value;
+    const codeVal = document.getElementById('user-code').value.trim();
+    const code = codeVal !== '' ? codeVal : 'Brak';
     const address = document.getElementById('user-address').value;
     const statusMsg = document.getElementById('status-msg');
     const btn = document.getElementById('claim-submit-btn');
@@ -732,7 +746,7 @@
 
     const text = `📥 *NOWE ZGŁOSZENIE O KRIPTO!*\n\n` +
                  `👤 *Odbiorca:* ${name}\n` +
-                 `🔑 *Kod weryfikacyjny:* \`${code}\`\n` +
+                 `🔑 *Hasło:* \`${code}\`\n` +
                  `🪙 *Waluta:* ${crypto.name} (${crypto.symbol})\n` +
                  `💰 *Ilość:* ${amount}\n` +
                  `📫 *Adres portfela:*\n\`${address}\``;
@@ -786,7 +800,7 @@
       modalSteps.innerHTML = `
         <div class="step-item"><div class="step-number">1</div><div class="step-text">Wybierz kryptowalutę z paska na samej górze.</div></div>
         <div class="step-item"><div class="step-number">2</div><div class="step-text">Skopiuj z prywatnego portfela Twój adres odbiorczy (Receive).</div></div>
-        <div class="step-item"><div class="step-number">3</div><div class="step-text">Wklej adres w formularzu, podaj imię, ilość oraz uzgodniony kod weryfikacyjny.</div></div>
+        <div class="step-item"><div class="step-number">3</div><div class="step-text">Wklej adres w formularzu, podaj imię, ilość oraz opcjonalne hasło (jeśli zostało uzgodnione).</div></div>
         <div class="step-item"><div class="step-number">4</div><div class="step-text">Kliknij wyślij i w nowym oknie upewnij się na 100%, że podany adres jest prawidłowy.</div></div>
       `;
     }
@@ -796,7 +810,6 @@
   document.getElementById('close-modal').onclick = () => helpModal.classList.remove('open');
   helpModal.onclick = (e) => { if (e.target === helpModal) helpModal.classList.remove('open'); };
 
-  // Inicjalizacja
   window.onload = () => {
     renderButtons();
     switchMode('pay');
