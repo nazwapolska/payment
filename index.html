@@ -22,6 +22,9 @@
       --input-bg: #0d131d;
       --modal-bg: rgba(0, 0, 0, 0.75);
       --modal-card: #121824;
+      --warning-bg: rgba(239, 68, 68, 0.1);
+      --warning-border: rgba(239, 68, 68, 0.3);
+      --warning-text: #f87171;
     }
 
     /* Zmienne dla motywu jasnego */
@@ -39,6 +42,9 @@
       --input-bg: #f8fafc;
       --modal-bg: rgba(15, 23, 42, 0.6);
       --modal-card: #ffffff;
+      --warning-bg: rgba(239, 68, 68, 0.08);
+      --warning-border: rgba(239, 68, 68, 0.25);
+      --warning-text: #dc2626;
     }
 
     * {
@@ -67,7 +73,7 @@
       gap: 20px;
     }
 
-    /* Pasek nawigacji głównej (Wybór trybu + Motyw) */
+    /* Pasek nawigacji głównej */
     .top-nav {
       display: flex;
       justify-content: space-between;
@@ -131,7 +137,7 @@
       margin-left: 4px;
     }
 
-    /* Przełączniki kryptowalut */
+    /* Wybór kryptowalut */
     .crypto-selector {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
@@ -172,6 +178,43 @@
       border-radius: 20px;
       padding: 32px;
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
+      position: relative;
+    }
+
+    /* Interaktywny przycisk Sieci (Pop-over) */
+    .network-badge-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--button-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 4px;
+    }
+
+    .network-badge-btn:hover {
+      color: var(--text-main);
+      border-color: var(--accent-color);
+    }
+
+    .network-info-box {
+      display: none;
+      background: var(--input-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      margin-top: 8px;
+    }
+
+    .network-info-box.show {
+      display: block;
     }
 
     /* TRYB 1: PŁATNOŚĆ (QR + Adres) */
@@ -210,12 +253,12 @@
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 18px;
     }
 
     .header-info { display: flex; align-items: center; gap: 12px; }
     .header-info svg { width: 42px; height: 42px; }
-    .crypto-title-group { display: flex; align-items: center; gap: 10px; }
+    .crypto-title-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .crypto-name { font-size: 26px; font-weight: 700; }
     
     .crypto-symbol {
@@ -226,18 +269,6 @@
       font-size: 12px;
       font-weight: 700;
       border: 1px solid var(--card-border);
-    }
-
-    .network-warning {
-      background: var(--button-bg);
-      border: 1px solid var(--card-border);
-      color: #3b82f6;
-      padding: 10px 14px;
-      border-radius: 10px;
-      font-size: 13px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
     }
 
     .address-group { display: flex; flex-direction: column; gap: 8px; }
@@ -275,7 +306,19 @@
     .claim-view {
       display: none;
       flex-direction: column;
-      gap: 20px;
+      gap: 18px;
+    }
+
+    /* Ostrzeżenie o poprawności adresu */
+    .strict-warning-box {
+      background: var(--warning-bg);
+      border: 1px solid var(--warning-border);
+      color: var(--warning-text);
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 13px;
+      line-height: 1.4;
+      font-weight: 500;
     }
 
     .form-group { display: flex; flex-direction: column; gap: 6px; }
@@ -309,7 +352,7 @@
     .status-msg.success { color: #22c55e; }
     .status-msg.error { color: #ef4444; }
 
-    /* Modal */
+    /* Modal (Instrukcja) */
     .modal-overlay {
       position: fixed; top: 0; left: 0; right: 0; bottom: 0;
       background: var(--modal-bg); backdrop-filter: blur(4px);
@@ -319,7 +362,7 @@
 
     .modal-content {
       background: var(--modal-card); border: 1px solid var(--card-border);
-      border-radius: 20px; max-width: 500px; width: 100%; padding: 28px;
+      border-radius: 20px; max-width: 520px; width: 100%; padding: 28px;
       display: flex; flex-direction: column; gap: 20px;
     }
 
@@ -327,14 +370,15 @@
     .modal-title { font-size: 20px; font-weight: 700; }
     .close-btn { background: none; border: none; color: var(--text-muted); font-size: 24px; cursor: pointer; }
 
-    .instruction-steps { display: flex; flex-direction: column; gap: 14px; }
-    .step-item { display: flex; gap: 12px; align-items: flex-start; }
+    .instruction-steps { display: flex; flex-direction: column; gap: 16px; }
+    .step-item { display: flex; gap: 14px; align-items: flex-start; }
     .step-number {
-      background: var(--accent-color); color: white; width: 26px; height: 26px;
+      background: var(--accent-color); color: white; width: 28px; height: 28px;
       border-radius: 50%; display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: 700; flex-shrink: 0;
+      font-size: 13px; font-weight: 700; flex-shrink: 0; margin-top: 2px;
     }
     .step-text { font-size: 14px; line-height: 1.5; color: var(--text-main); }
+    .step-text strong { color: var(--accent-color); }
 
     @media (max-width: 650px) {
       .crypto-selector { grid-template-columns: repeat(3, 1fr); }
@@ -353,7 +397,7 @@
     </div>
 
     <div class="top-actions">
-      <button class="action-btn" id="help-btn">❓ Jak to działa?</button>
+      <button class="action-btn" id="help-btn">❓ Instrukcja krok po kroku</button>
       <button class="action-btn" id="theme-toggle">🌙 Motyw</button>
     </div>
   </div>
@@ -363,7 +407,7 @@
   <!-- Przełączniki kryptowalut -->
   <div class="crypto-selector" id="selector"></div>
 
-  <!-- Główna karta zmienna w zależności od trybu -->
+  <!-- Główna karta -->
   <div class="main-card">
     
     <!-- WIDOK 1: Wpłata (QR + Adres) -->
@@ -385,9 +429,13 @@
           </div>
         </div>
 
-        <div class="network-warning">
-          <span>ℹ</span>
-          <span class="network-text">Wysyłaj tylko przez: Sieć Bitcoin (BTC)</span>
+        <div>
+          <button class="network-badge-btn" onclick="toggleNetworkInfo('pay')">
+            ℹ️ Informacja o sieci
+          </button>
+          <div class="network-info-box" id="pay-network-box">
+            Wysyłaj wyłącznie przez sieć: <strong class="network-name">Sieć Bitcoin (BTC)</strong>
+          </div>
         </div>
 
         <div class="address-group">
@@ -413,24 +461,32 @@
         </div>
       </div>
 
-      <div class="network-warning">
-        <span>ℹ</span>
-        <span class="network-text">Podaj swój adres zgodny z siecią!</span>
+      <div>
+        <button type="button" class="network-badge-btn" onclick="toggleNetworkInfo('claim')">
+          ℹ️ Informacja o sieci
+        </button>
+        <div class="network-info-box" id="claim-network-box">
+          Twój podawany adres musi obsługiwać sieć: <strong class="network-name">Sieć Bitcoin (BTC)</strong>
+        </div>
+      </div>
+
+      <div class="strict-warning-box">
+        ⚠️ <strong>Bardzo ważne:</strong> Upewnij się na 100%, że podajesz prawidłowy adres portfela. Jeśli wprowadzisz błędny adres, wysłane kryptowaluty przepadną i ich odzyskanie będzie niemożliwe!
       </div>
 
       <div class="form-group">
-        <label for="user-name">Twoje Imię / Nick / Identifikator:</label>
-        <input type="text" id="user-name" placeholder="np. Piotrek" required>
+        <label for="user-name">Imię / Nick:</label>
+        <input type="text" id="user-name" required>
       </div>
 
       <div class="form-group">
-        <label for="user-amount">Uzgodniona kwota do odbioru (opcjonalnie):</label>
-        <input type="text" id="user-amount" placeholder="np. 0.5 SOL lub 50 USD">
+        <label for="user-amount">Ilość waluty:</label>
+        <input type="text" id="user-amount" required>
       </div>
 
       <div class="form-group">
-        <label for="user-address">Twój Adres Portfela (gdzie przelać środki):</label>
-        <input type="text" id="user-address" placeholder="Wklej tutaj swój adres portfela" required>
+        <label for="user-address">Twój Adres Portfela:</label>
+        <input type="text" id="user-address" required>
       </div>
 
       <button type="submit" class="submit-btn" id="claim-submit-btn">Wyślij wniosek o wypłatę</button>
@@ -444,7 +500,7 @@
 <div class="modal-overlay" id="help-modal">
   <div class="modal-content">
     <div class="modal-header">
-      <div class="modal-title" id="modal-title">Jak wykonać płatność?</div>
+      <div class="modal-title" id="modal-title">Instrukcja krok po kroku</div>
       <button class="close-btn" id="close-modal">&times;</button>
     </div>
     <div class="instruction-steps" id="modal-steps"></div>
@@ -501,7 +557,7 @@
   ];
 
   let activeIndex = 0;
-  let currentMode = 'pay'; // 'pay' lub 'claim'
+  let currentMode = 'pay';
 
   // Obsługa motywów
   const themeToggle = document.getElementById('theme-toggle');
@@ -524,6 +580,12 @@
   };
   setTheme(savedTheme);
 
+  // Przełączanie informacji o sieci
+  function toggleNetworkInfo(view) {
+    const box = document.getElementById(`${view}-network-box`);
+    box.classList.toggle('show');
+  }
+
   // Przełączanie trybów (Wpłać / Odbierz)
   const modePayBtn = document.getElementById('mode-pay-btn');
   const modeClaimBtn = document.getElementById('mode-claim-btn');
@@ -535,6 +597,8 @@
 
   function switchMode(mode) {
     currentMode = mode;
+    document.querySelectorAll('.network-info-box').forEach(el => el.classList.remove('show'));
+
     if (mode === 'pay') {
       modePayBtn.classList.add('active');
       modeClaimBtn.classList.remove('active');
@@ -574,7 +638,7 @@
     document.querySelectorAll('.crypto-icon-placeholder').forEach(el => el.innerHTML = crypto.icon);
     document.querySelectorAll('.crypto-name').forEach(el => el.innerText = crypto.name);
     document.querySelectorAll('.crypto-symbol').forEach(el => el.innerText = crypto.symbol);
-    document.querySelectorAll('.network-text').forEach(el => el.innerText = `Obsługiwana sieć: ${crypto.network}`);
+    document.querySelectorAll('.network-name').forEach(el => el.innerText = crypto.network);
 
     if (currentMode === 'pay') {
       document.querySelector('.address-text').innerText = crypto.address;
@@ -611,7 +675,7 @@
     
     const crypto = cryptos[activeIndex];
     const name = document.getElementById('user-name').value;
-    const amount = document.getElementById('user-amount').value || 'Nie podano';
+    const amount = document.getElementById('user-amount').value;
     const address = document.getElementById('user-address').value;
     const statusMsg = document.getElementById('status-msg');
     const btn = document.getElementById('claim-submit-btn');
@@ -622,7 +686,7 @@
     const text = `📥 *NOWE ZGŁOSZENIE O KRIPTO!*\n\n` +
                  `👤 *Odbiorca:* ${name}\n` +
                  `🪙 *Waluta:* ${crypto.name} (${crypto.symbol})\n` +
-                 `💰 *Kwota:* ${amount}\n` +
+                 `💰 *Ilość:* ${amount}\n` +
                  `📫 *Adres portfela:*\n\`${address}\``;
 
     try {
@@ -638,7 +702,7 @@
 
       if (res.ok) {
         statusMsg.className = 'status-msg success';
-        statusMsg.innerText = '✅ Zgłoszenie wysłane! Oczekuj na przelanie środków.';
+        statusMsg.innerText = '✅ Zgłoszenie wysłane! Oczekuj na realizację przelewu.';
         statusMsg.style.display = 'block';
         document.getElementById('claim-view').reset();
       } else {
@@ -646,7 +710,7 @@
       }
     } catch (err) {
       statusMsg.className = 'status-msg error';
-      statusMsg.innerText = '❌ Błąd wysyłania. Upewnij się, że kliknąłeś START na botcie.';
+      statusMsg.innerText = '❌ Błąd wysyłania. Upewnij się, że kliknąłeś START na botcie Telegrama.';
       statusMsg.style.display = 'block';
     } finally {
       btn.disabled = false;
@@ -654,7 +718,7 @@
     }
   };
 
-  // Modal Instrukcji
+  // Dokładna i przejrzysta instrukcja w oknie Modal
   const helpModal = document.getElementById('help-modal');
   document.getElementById('help-btn').onclick = () => {
     const modalTitle = document.getElementById('modal-title');
@@ -663,18 +727,42 @@
     if (currentMode === 'pay') {
       modalTitle.innerText = "Jak wykonać wpłatę?";
       modalSteps.innerHTML = `
-        <div class="step-item"><div class="step-number">1</div><div class="step-text">Otwórz swój portfel lub giełdę (np. Binance, Trust Wallet).</div></div>
-        <div class="step-item"><div class="step-number">2</div><div class="step-text">Wybierz opcję <strong>Wysłyj / Wypłać (Send / Withdraw)</strong>.</div></div>
-        <div class="step-item"><div class="step-number">3</div><div class="step-text">Zeskanuj kod QR lub skopiuj podany adres portfela.</div></div>
-        <div class="step-item"><div class="step-number">4</div><div class="step-text"><strong>Ważne:</strong> Upewnij się, że wybierasz właściwą sieć transakcji.</div></div>
+        <div class="step-item">
+          <div class="step-number">1</div>
+          <div class="step-text">Wybierz odpowiednią kryptowalutę z paska na samej górze.</div>
+        </div>
+        <div class="step-item">
+          <div class="step-number">2</div>
+          <div class="step-text">Otwórz swoją aplikację portfela kryptowalutowego lub giełdy (np. Binance, Trust Wallet, MetaMask) i przejdź do sekcji <strong>Wypłać / Send</strong>.</div>
+        </div>
+        <div class="step-item">
+          <div class="step-number">3</div>
+          <div class="step-text">Zeskanuj kod QR aparatem w aplikacji lub kliknij przycisk <strong>Kopiuj</strong> i wklej adres w polu odbiorcy.</div>
+        </div>
+        <div class="step-item">
+          <div class="step-number">4</div>
+          <div class="step-text">Kliknij przycisk <strong>ℹ️ Informacja o sieci</strong> na stronie, aby upewnić się, że wybierasz właściwą sieć transakcyjną podczas wysyłki.</div>
+        </div>
       `;
     } else {
-      modalTitle.innerText = "Jak odebrać krypto?";
+      modalTitle.innerText = "Jak odebrać kryptowalutę?";
       modalSteps.innerHTML = `
-        <div class="step-item"><div class="step-number">1</div><div class="step-text">Wybierz kryptowalutę z listy na górze.</div></div>
-        <div class="step-item"><div class="step-number">2</div><div class="step-text">Otwórz swój portfel i skopiuj <strong>Twój własny adres</strong> odbiorczy danej waluty.</div></div>
-        <div class="step-item"><div class="step-number">3</div><div class="step-text">Wklej go w formularzu, podaj swoje imię/nick i kliknij <strong>Wyślij wniosek</strong>.</div></div>
-        <div class="step-item"><div class="step-number">4</div><div class="step-text">Otrzymasz przelew, gdy wniosek zostanie przetworzony.</div></div>
+        <div class="step-item">
+          <div class="step-number">1</div>
+          <div class="step-text">Wybierz kryptowalutę z paska na górze, którą chcesz odebrać.</div>
+        </div>
+        <div class="step-item">
+          <div class="step-number">2</div>
+          <div class="step-text">Otwórz swój prywatny portfel kryptowalutowy i skopiuj z niego <strong>Twój osobisty adres odbiorczy (Receive)</strong>.</div>
+        </div>
+        <div class="step-item">
+          <div class="step-number">3</div>
+          <div class="step-text">Wklej adres w formularzu, podaj swoje imię lub nick oraz oczekiwaną ilość waluty.</div>
+        </div>
+        <div class="step-item">
+          <div class="step-number">4</div>
+          <div class="step-text"><strong>Sprawdź adres znak po znaku!</strong> Upewnij się, że nie ma w nim błędu, a następnie kliknij <strong>Wyślij wniosek o wypłatę</strong>.</div>
+        </div>
       `;
     }
     helpModal.classList.add('open');
