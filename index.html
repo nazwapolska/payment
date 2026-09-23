@@ -676,8 +676,8 @@
 
     <div class="confirm-checkbox-group">
       <input type="checkbox" id="network-confirm-check">
-      <label for="network-confirm-check" id="check-network-label">
-        Oświadczam, że sprawdzałem swój portfel i mój adres wspiera sieć <strong id="check-network-name">...</strong>.
+      <label for="network-confirm-check" id="check-network-label" data-i18n="check_network_text">
+        Oświadczam, że wszystkie podane dane (w tym adres portfela oraz wyznaczoną sieć) są prawidłowe.
       </label>
     </div>
 
@@ -733,7 +733,7 @@
       summary_amount: "Ilość",
       summary_code: "Hasło",
       summary_address: "Adres portfela",
-      check_network_text: "Oświadczam, że sprawdzałem swój portfel i mój adres wspiera sieć ",
+      check_network_text: "Oświadczam, że wszystkie podane dane (w tym adres portfela oraz wyznaczona sieć) są prawidłowe.",
       cooldown_notice: "⏱️ <strong>Ograniczenie czasowe:</strong> Następny wniosek będziesz mógł złożyć dopiero za <strong>1 godzinę</strong>. Upewnij się, że wszystkie dane są w 100% poprawne!",
       strict_warning: "⚠️ <strong>Bardzo ważne:</strong> Podanie nieprawidłowego adresu lub sieci spowoduje bezpowrotną utratę wysłanych środków!",
       btn_cancel: "Anuluj",
@@ -783,7 +783,7 @@
       summary_amount: "Amount",
       summary_code: "Password",
       summary_address: "Wallet Address",
-      check_network_text: "I confirm that I checked my wallet and my address supports network ",
+      check_network_text: "I declare that all provided details (including the wallet address and network) are correct.",
       cooldown_notice: "⏱️ <strong>Time limit:</strong> You can only submit your next request after <strong>1 hour</strong>. Make sure all details are 100% correct!",
       strict_warning: "⚠️ <strong>Very important:</strong> Providing an incorrect address or network will cause permanent loss of sent funds!",
       btn_cancel: "Cancel",
@@ -845,7 +845,7 @@
   }
 
   const themeToggle = document.getElementById('theme-toggle');
-  const savedTheme = localStorage.getItem('crypto_theme') || 'dark';
+  const savedTheme = localStorage.getItem('crypto_theme') || 'light';
 
   function setTheme(theme) {
     if (theme === 'light') {
@@ -1051,7 +1051,6 @@
   document.getElementById('claim-view').onsubmit = (e) => {
     e.preventDefault();
     const crypto = cryptos[activeIndex];
-    const t = translations[currentLang];
     const networkName = currentLang === 'pl' ? crypto.networkPL : crypto.networkEN;
 
     if (DISABLED_CLAIM_CRYPTOS.includes(crypto.id)) return;
@@ -1067,8 +1066,6 @@
     document.getElementById('summary-amount').innerText = document.getElementById('user-amount').value;
     document.getElementById('summary-code').innerText = codeVal !== '' ? codeVal : (currentLang === 'pl' ? 'Brak' : 'None');
     document.getElementById('summary-address').innerText = document.getElementById('user-address').value;
-
-    document.getElementById('check-network-label').innerHTML = `${t.check_network_text} <strong>${networkName}</strong>.`;
 
     confirmModal.classList.add('open');
   };
