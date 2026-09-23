@@ -115,13 +115,13 @@
       color: white;
     }
 
-    .top-actions { display: flex; gap: 10px; }
+    .top-actions { display: flex; gap: 8px; }
 
     .action-btn {
       background: var(--button-bg);
       border: 1px solid var(--card-border);
       color: var(--text-main);
-      padding: 8px 14px;
+      padding: 8px 12px;
       border-radius: 10px;
       font-size: 13px;
       font-weight: 600;
@@ -443,16 +443,6 @@
       overflow-wrap: anywhere;
     }
 
-    .confirm-network-box {
-      background: rgba(79, 70, 229, 0.12);
-      border: 1px solid rgba(79, 70, 229, 0.35);
-      padding: 10px 14px;
-      border-radius: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
     .confirm-checkbox-group {
       display: flex;
       align-items: flex-start;
@@ -525,17 +515,18 @@
 <div class="container">
   <div class="top-nav">
     <div class="mode-switch">
-      <button class="mode-btn active" id="mode-pay-btn">💸 Wpłać krypto</button>
-      <button class="mode-btn" id="mode-claim-btn">🎁 Odbierz krypto</button>
+      <button class="mode-btn active" id="mode-pay-btn">💸 <span data-i18n="mode_pay">Wpłać krypto</span></button>
+      <button class="mode-btn" id="mode-claim-btn">🎁 <span data-i18n="mode_claim">Odbierz krypto</span></button>
     </div>
 
     <div class="top-actions">
-      <button class="action-btn" id="help-btn">❓ Instrukcja</button>
-      <button class="action-btn" id="theme-toggle">🌙 Motyw</button>
+      <button class="action-btn" id="lang-toggle">🌐 EN</button>
+      <button class="action-btn" id="help-btn">❓ <span data-i18n="help_btn">Instrukcja</span></button>
+      <button class="action-btn" id="theme-toggle">🌙 <span data-i18n="theme_btn">Motyw</span></button>
     </div>
   </div>
 
-  <div class="section-title">WYBIERZ WALUTĘ:</div>
+  <div class="section-title" data-i18n="select_currency">WYBIERZ WALUTĘ:</div>
 
   <div class="crypto-selector" id="selector"></div>
 
@@ -545,7 +536,7 @@
         <div class="qr-container" id="qrcode"></div>
         <div class="qr-label">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-          Zeskanuj aplikacją portfela
+          <span data-i18n="qr_scan">Zeskanuj aplikacją portfela</span>
         </div>
       </div>
 
@@ -562,20 +553,20 @@
 
         <div>
           <button class="network-badge-btn" onclick="toggleNetworkInfo('pay')">
-            ℹ️ Informacja o sieci
+            ℹ️ <span data-i18n="network_info_btn">Informacja o sieci</span>
           </button>
           <div class="network-info-box" id="pay-network-box">
-            Wysyłaj wyłącznie przez sieć: <strong class="network-name">Sieć Bitcoin (BTC)</strong>
+            <span data-i18n="send_only_via">Wysyłaj wyłącznie przez sieć:</span> <strong class="network-name">Sieć Bitcoin (BTC)</strong>
           </div>
         </div>
 
         <div class="address-group">
-          <div class="address-label">Adres portfela do wpłaty:</div>
+          <div class="address-label" data-i18n="deposit_address_label">Adres portfela do wpłaty:</div>
           <div class="address-box">
             <span class="address-text">...</span>
             <button class="copy-btn" id="copy-btn">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-              Kopiuj
+              <span id="copy-btn-text" data-i18n="copy">Kopiuj</span>
             </button>
           </div>
         </div>
@@ -593,41 +584,41 @@
 
       <div class="recommendation-banner" id="claim-recommendation"></div>
 
-      <div class="disabled-notice" id="disabled-notice">
+      <div class="disabled-notice" id="disabled-notice" data-i18n="disabled_notice">
         ⚠️ Wypłaty dla tej kryptowaluty są tymczasowo niedostępne. Wybierz inną walutę.
       </div>
 
       <div>
         <button type="button" class="network-badge-btn" onclick="toggleNetworkInfo('claim')">
-          ℹ️ Informacja o sieci
+          ℹ️ <span data-i18n="network_info_btn">Informacja o sieci</span>
         </button>
         <div class="network-info-box" id="claim-network-box">
-          Twój podawany adres musi obsługiwać sieć: <strong class="network-name">Sieć Bitcoin (BTC)</strong>
+          <span data-i18n="your_address_must_support">Twój podawany adres musi obsługiwać sieć:</span> <strong class="network-name">Sieć Bitcoin (BTC)</strong>
         </div>
       </div>
 
       <div class="form-group">
-        <label for="user-name">Imię / Nick:</label>
+        <label for="user-name" data-i18n="label_name">Imię / Nick:</label>
         <input type="text" id="user-name" maxlength="32" required>
       </div>
 
       <div class="form-group">
-        <label for="user-amount">Ilość:</label>
+        <label for="user-amount" data-i18n="label_amount">Ilość:</label>
         <input type="text" id="user-amount" maxlength="20" required>
       </div>
 
       <div class="form-group">
-        <label for="user-code">Hasło (opcjonalnie):</label>
-        <div class="field-desc">Wpisz hasło tylko, jeśli zostałeś o nie poproszony.</div>
+        <label for="user-code" data-i18n="label_code">Hasło (opcjonalnie):</label>
+        <div class="field-desc" data-i18n="field_desc_code">Wpisz hasło tylko, jeśli zostałeś o nie poproszony.</div>
         <input type="text" id="user-code" maxlength="30">
       </div>
 
       <div class="form-group">
-        <label for="user-address">Twój Adres Portfela:</label>
+        <label for="user-address" data-i18n="label_address">Twój Adres Portfela:</label>
         <input type="text" id="user-address" maxlength="110" required>
       </div>
 
-      <button type="submit" class="submit-btn" id="claim-submit-btn">Wyślij wniosek o wypłatę</button>
+      <button type="submit" class="submit-btn" id="claim-submit-btn" data-i18n="submit_claim">Wyślij wniosek o wypłatę</button>
       <div class="status-msg" id="status-msg"></div>
     </form>
 
@@ -637,7 +628,7 @@
 <div class="modal-overlay" id="help-modal">
   <div class="modal-content">
     <div class="modal-header">
-      <div class="modal-title" id="modal-title">Instrukcja</div>
+      <div class="modal-title" id="modal-title" data-i18n="modal_help_title">Instrukcja</div>
       <button class="close-btn" id="close-modal">&times;</button>
     </div>
     <div class="instruction-steps" id="modal-steps"></div>
@@ -647,60 +638,60 @@
 <div class="modal-overlay" id="confirm-modal">
   <div class="modal-content">
     <div class="modal-header">
-      <div class="modal-title">Potwierdź dane wypłaty</div>
+      <div class="modal-title" data-i18n="modal_confirm_title">Potwierdź dane wypłaty</div>
       <button class="close-btn" id="close-confirm-modal">&times;</button>
     </div>
     
     <div class="confirm-summary">
       <div class="confirm-summary-item">
-        <span class="confirm-summary-label">Odbiorca</span>
+        <span class="confirm-summary-label" data-i18n="summary_recipient">Odbiorca</span>
         <span class="confirm-summary-val" id="summary-name">-</span>
       </div>
 
       <div class="confirm-summary-row-inline">
-        <span class="confirm-summary-label">Waluta</span>
+        <span class="confirm-summary-label" data-i18n="summary_currency">Waluta</span>
         <span class="confirm-summary-val" id="summary-crypto">-</span>
       </div>
 
-      <div class="confirm-network-box">
-        <span class="confirm-summary-label">Wymagana Sieć:</span>
-        <span class="confirm-summary-val" id="summary-network" style="color: #6366f1;">-</span>
+      <div class="confirm-summary-row-inline">
+        <span class="confirm-summary-label" data-i18n="summary_network">Wymagana Sieć</span>
+        <span class="confirm-summary-val" id="summary-network">-</span>
       </div>
 
       <div class="confirm-summary-row-inline">
-        <span class="confirm-summary-label">Ilość</span>
+        <span class="confirm-summary-label" data-i18n="summary_amount">Ilość</span>
         <span class="confirm-summary-val" id="summary-amount">-</span>
       </div>
 
       <div class="confirm-summary-row-inline">
-        <span class="confirm-summary-label">Hasło</span>
+        <span class="confirm-summary-label" data-i18n="summary_code">Hasło</span>
         <span class="confirm-summary-val" id="summary-code">-</span>
       </div>
 
       <div class="confirm-summary-item">
-        <span class="confirm-summary-label">Adres portfela</span>
+        <span class="confirm-summary-label" data-i18n="summary_address">Adres portfela</span>
         <span class="confirm-summary-val" id="summary-address" style="font-family: monospace; font-size: 13px;">-</span>
       </div>
     </div>
 
     <div class="confirm-checkbox-group">
       <input type="checkbox" id="network-confirm-check">
-      <label for="network-confirm-check">
+      <label for="network-confirm-check" id="check-network-label">
         Oświadczam, że sprawdzałem swój portfel i mój adres wspiera sieć <strong id="check-network-name">...</strong>.
       </label>
     </div>
 
-    <div class="info-cooldown-box">
+    <div class="info-cooldown-box" data-i18n="cooldown_notice">
       ⏱️ <strong>Ograniczenie czasowe:</strong> Następny wniosek będziesz mógł złożyć dopiero za <strong>1 godzinę</strong>. Upewnij się, że wszystkie dane są w 100% poprawne!
     </div>
 
-    <div class="strict-warning-box">
-      ⚠️ <strong>Bardzo ważne:</strong> Podanie nieprawidłowej sieci spowoduje bezpowrotną utratę wysłanych środków!
+    <div class="strict-warning-box" data-i18n="strict_warning">
+      ⚠️ <strong>Bardzo ważne:</strong> Podanie nieprawidłowego adresu lub sieci spowoduje bezpowrotną utratę wysłanych środków!
     </div>
 
     <div class="modal-actions">
-      <button class="modal-btn-cancel" id="cancel-send-btn">Anuluj</button>
-      <button class="modal-btn-confirm" id="final-send-btn" disabled>Potwierdzam i wysyłam</button>
+      <button class="modal-btn-cancel" id="cancel-send-btn" data-i18n="btn_cancel">Anuluj</button>
+      <button class="modal-btn-confirm" id="final-send-btn" disabled data-i18n="btn_confirm_send">Potwierdzam i wysyłam</button>
     </div>
   </div>
 </div>
@@ -712,24 +703,146 @@
 
   const DISABLED_CLAIM_CRYPTOS = ['eth', 'doge', 'bnb', 'trx', 'matic', 'avax'];
 
+  let currentLang = 'pl';
+
+  const translations = {
+    pl: {
+      mode_pay: "Wpłać krypto",
+      mode_claim: "Odbierz krypto",
+      help_btn: "Instrukcja",
+      theme_btn: "Motyw",
+      select_currency: "WYBIERZ WALUTĘ:",
+      qr_scan: "Zeskanuj aplikacją portfela",
+      network_info_btn: "Informacja o sieci",
+      send_only_via: "Wysyłaj wyłącznie przez sieć:",
+      deposit_address_label: "Adres portfela do wpłaty:",
+      copy: "Kopiuj",
+      copied: "Skopiowano!",
+      disabled_notice: "⚠️ Wypłaty dla tej kryptowaluty są tymczasowo niedostępne. Wybierz inną walutę.",
+      your_address_must_support: "Twój podawany adres musi obsługiwać sieć:",
+      label_name: "Imię / Nick:",
+      label_amount: "Ilość:",
+      label_code: "Hasło (opcjonalnie):",
+      field_desc_code: "Wpisz hasło tylko, jeśli zostałeś o nie poproszony.",
+      label_address: "Twój Adres Portfela:",
+      submit_claim: "Wyślij wniosek o wypłatę",
+      modal_confirm_title: "Potwierdź dane wypłaty",
+      summary_recipient: "Odbiorca",
+      summary_currency: "Waluta",
+      summary_network: "Wymagana Sieć",
+      summary_amount: "Ilość",
+      summary_code: "Hasło",
+      summary_address: "Adres portfela",
+      check_network_text: "Oświadczam, że sprawdzałem swój portfel i mój adres wspiera sieć ",
+      cooldown_notice: "⏱️ <strong>Ograniczenie czasowe:</strong> Następny wniosek będziesz mógł złożyć dopiero za <strong>1 godzinę</strong>. Upewnij się, że wszystkie dane są w 100% poprawne!",
+      strict_warning: "⚠️ <strong>Bardzo ważne:</strong> Podanie nieprawidłowego adresu lub sieci spowoduje bezpowrotną utratę wysłanych środków!",
+      btn_cancel: "Anuluj",
+      btn_confirm_send: "Potwierdzam i wysyłam",
+      recommended_tag: "POLECANE",
+      recommended_note: "⭐ Polecana waluta!",
+      sending: "Wysyłanie...",
+      disabled_btn: "Tymczasowo niedostępne",
+      wait_cooldown: "Odczekaj ",
+      success_msg: "✅ Zgłoszenie wysłane! Oczekuj na realizację przelewu.",
+      error_msg: "❌ Błąd wysyłania. Upewnij się, że kliknąłeś START na botcie Telegrama.",
+      modal_pay_title: "Jak wykonać wpłatę?",
+      modal_claim_title: "Jak odebrać kryptowalutę?",
+      pay_step1: "Wybierz kryptowalutę z paska na samej górze.",
+      pay_step2: "Otwórz aplikację portfela/giełdy (np. Binance, Trust Wallet) i przejdź do <strong>Wypłać / Send</strong>.",
+      pay_step3: "Zeskanuj kod QR lub kliknij <strong>Kopiuj</strong> i wklej adres w polu odbiorcy.",
+      pay_step4: "Sprawdź przyciskiem <strong>ℹ️ Informacja o sieci</strong>, czy wybierasz właściwą sieć.",
+      claim_step1: "Wybierz kryptowalutę z paska na samej górze.",
+      claim_step2: "Skopiuj z prywatnego portfela Twój adres odbiorczy (Receive).",
+      claim_step3: "Wklej adres w formularzu, podaj imię, ilość oraz opcjonalne hasło (jeśli zostało uzgodnione).",
+      claim_step4: "Kliknij wyślij i w nowym oknie upewnij się na 100%, że podany adres jest prawidłowy."
+    },
+    en: {
+      mode_pay: "Deposit Crypto",
+      mode_claim: "Claim Crypto",
+      help_btn: "Instructions",
+      theme_btn: "Theme",
+      select_currency: "SELECT CURRENCY:",
+      qr_scan: "Scan with your wallet app",
+      network_info_btn: "Network Info",
+      send_only_via: "Only send via network:",
+      deposit_address_label: "Deposit Wallet Address:",
+      copy: "Copy",
+      copied: "Copied!",
+      disabled_notice: "⚠️ Withdrawals for this cryptocurrency are temporarily unavailable. Please select another currency.",
+      your_address_must_support: "Your provided address must support network:",
+      label_name: "Name / Nickname:",
+      label_amount: "Amount:",
+      label_code: "Password (optional):",
+      field_desc_code: "Enter a password only if you were asked for one.",
+      label_address: "Your Wallet Address:",
+      submit_claim: "Submit Withdrawal Request",
+      modal_confirm_title: "Confirm Withdrawal Details",
+      summary_recipient: "Recipient",
+      summary_currency: "Currency",
+      summary_network: "Required Network",
+      summary_amount: "Amount",
+      summary_code: "Password",
+      summary_address: "Wallet Address",
+      check_network_text: "I confirm that I checked my wallet and my address supports network ",
+      cooldown_notice: "⏱️ <strong>Time limit:</strong> You can only submit your next request after <strong>1 hour</strong>. Make sure all details are 100% correct!",
+      strict_warning: "⚠️ <strong>Very important:</strong> Providing an incorrect address or network will cause permanent loss of sent funds!",
+      btn_cancel: "Cancel",
+      btn_confirm_send: "Confirm & Send",
+      recommended_tag: "RECOMMENDED",
+      recommended_note: "⭐ Recommended currency!",
+      sending: "Sending...",
+      disabled_btn: "Temporarily Unavailable",
+      wait_cooldown: "Wait ",
+      success_msg: "✅ Request submitted! Please wait for transfer processing.",
+      error_msg: "❌ Sending error. Make sure you clicked START on the Telegram bot.",
+      modal_pay_title: "How to make a deposit?",
+      modal_claim_title: "How to claim cryptocurrency?",
+      pay_step1: "Select a cryptocurrency from the top bar.",
+      pay_step2: "Open your wallet/exchange app (e.g. Binance, Trust Wallet) and go to <strong>Withdraw / Send</strong>.",
+      pay_step3: "Scan the QR code or click <strong>Copy</strong> and paste the address into the recipient field.",
+      pay_step4: "Check with the <strong>ℹ️ Network Info</strong> button that you are selecting the correct network.",
+      claim_step1: "Select a cryptocurrency from the top bar.",
+      claim_step2: "Copy your receiving address (Receive) from your private wallet.",
+      claim_step3: "Paste the address into the form, enter your name, amount, and optional password (if agreed upon).",
+      claim_step4: "Click submit and double-check in the new window that the provided address is 100% correct."
+    }
+  };
+
   const cryptos = [
-    { id: 'btc', name: 'Bitcoin', symbol: 'BTC', network: 'Sieć Bitcoin (BTC)', address: 'bc1qm6w0t38sm9mh63dusqe3zx2pmfhpnp86jz4znk', iconUrl: 'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/btc.svg' },
-    { id: 'eth', name: 'Ethereum', symbol: 'ETH', network: 'Sieć Ethereum (ERC20)', address: '0x3161ebA2EA675BD34Dcc3a3c31F95B15498CaaD9', iconUrl: 'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/eth.svg' },
-    { id: 'usdt', name: 'Tether USD', symbol: 'USDT', network: 'BNB Smart Chain (BEP20)', address: '0x3161ebA2EA675BD34Dcc3a3c31F95B15498CaaD9', iconUrl: 'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/usdt.svg' },
-    { id: 'usdc', name: 'USD Coin', symbol: 'USDC', network: 'Sieć Solana (SOL)', address: 'A8oRsgM9dMtSU8pB1E7RHKfWgdpnAfsPZKwoKN8VmBD1', iconUrl: 'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/usdc.svg' },
-    { id: 'sol', name: 'Solana', symbol: 'SOL', network: 'Sieć Solana (SOL)', address: 'A8oRsgM9dMtSU8pB1E7RHKfWgdpnAfsPZKwoKN8VmBD1', recommended: true, note: '⭐ Szybka realizacja i bardzo niskie opłaty sieciowe!', svg: `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#000"/><path d="M8.5 21.2a.6.6 0 01.4-.2h14.7c.3 0 .5.4.3.7l-2.4 2.4a.6.6 0 01-.4.2H6.4a.5.5 0 01-.3-.7l2.4-2.4zm0-10.4a.6.6 0 01.4-.2h14.7c.3 0 .5.4.3.7l-2.4 2.4a.6.6 0 01-.4.2H6.4a.5.5 0 01-.3-.7l2.4-2.4zm14.6 5.2a.6.6 0 00-.4-.2H8a.5.5 0 00-.3.7l2.4 2.4c.1.1.3.2.4.2h14.7c.3 0 .5-.4.3-.7l-2.4-2.4z" fill="url(#solG)"/><defs><linearGradient id="solG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00FFA3"/><stop offset="100%" stop-color="#DC1FFF"/></linearGradient></defs></svg>` },
-    { id: 'xrp', name: 'XRP', symbol: 'XRP', network: 'Sieć Ripple (XRP)', address: 'rKukG3tY8WkzaEKuMXhTPcgjoyphJq2afV', iconUrl: 'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/xrp.svg' },
-    { id: 'ltc', name: 'Litecoin', symbol: 'LTC', network: 'Sieć Litecoin (LTC)', address: 'ltc1qx4e7cdtkj3pfh4fkcz6trater9u7dxee4y5hgf', recommended: true, note: '⭐ Polecana waluta! Bardzo tanie i stabilne przelewy.', svg: `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#345D9D"/><path d="M15.3 7.5l-2.5 9.7-1.8.7-.6 2.3 2.1-.8-1.2 4.7h11l1.1-4.2H15.6l1.2-4.7 1.8-.7.6-2.3-2.1.8 1.4-5.5h-3.2z" fill="#FFF"/></svg>` },
-    { id: 'doge', name: 'Dogecoin', symbol: 'DOGE', network: 'Sieć Dogecoin (DOGE)', address: 'D6Uy1p7VxHvmh5QTr8apxBvvZz76sY2VXH', iconUrl: 'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/doge.svg' },
-    { id: 'bnb', name: 'BNB', symbol: 'BNB', network: 'BNB Smart Chain (BEP20)', address: '0x3161ebA2EA675BD34Dcc3a3c31F95B15498CaaD9', iconUrl: 'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/bnb.svg' },
-    { id: 'trx', name: 'TRON', symbol: 'TRX', network: 'Sieć TRON (TRC20)', address: 'TCH9FNofRrAX3V4WSsVhCqo5AAuxMRtrx', iconUrl: 'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/trx.svg' },
-    { id: 'matic', name: 'Polygon', symbol: 'POL', network: 'Sieć Polygon (POL)', address: '0x3161ebA2EA675BD34Dcc3a3c31F95B15498CaaD9', iconUrl: 'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/matic.svg' },
-    { id: 'avax', name: 'Avalanche', symbol: 'AVAX', network: 'Avalanche C-Chain', address: '0x3161ebA2EA675BD34Dcc3a3c31F95B15498CaaD9', iconUrl: 'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/avax.svg' }
+    { id: 'btc', name: 'Bitcoin', symbol: 'BTC', networkPL: 'Sieć Bitcoin (BTC)', networkEN: 'Bitcoin Network (BTC)', address: 'bc1qm6w0t38sm9mh63dusqe3zx2pmfhpnp86jz4znk', iconUrl: 'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/btc.svg' },
+    { id: 'eth', name: 'Ethereum', symbol: 'ETH', networkPL: 'Sieć Ethereum (ERC20)', networkEN: 'Ethereum Network (ERC20)', address: '0x3161ebA2EA675BD34Dcc3a3c31F95B15498CaaD9', iconUrl: 'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/eth.svg' },
+    { id: 'usdt', name: 'Tether USD', symbol: 'USDT', networkPL: 'BNB Smart Chain (BEP20)', networkEN: 'BNB Smart Chain (BEP20)', address: '0x3161ebA2EA675BD34Dcc3a3c31F95B15498CaaD9', iconUrl: 'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/usdt.svg' },
+    { id: 'usdc', name: 'USD Coin', symbol: 'USDC', networkPL: 'Sieć Solana (SOL)', networkEN: 'Solana Network (SOL)', address: 'A8oRsgM9dMtSU8pB1E7RHKfWgdpnAfsPZKwoKN8VmBD1', iconUrl: 'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/usdc.svg' },
+    { id: 'sol', name: 'Solana', symbol: 'SOL', networkPL: 'Sieć Solana (SOL)', networkEN: 'Solana Network (SOL)', address: 'A8oRsgM9dMtSU8pB1E7RHKfWgdpnAfsPZKwoKN8VmBD1', recommended: true, svg: `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#000"/><path d="M8.5 21.2a.6.6 0 01.4-.2h14.7c.3 0 .5.4.3.7l-2.4 2.4a.6.6 0 01-.4.2H6.4a.5.5 0 01-.3-.7l2.4-2.4zm0-10.4a.6.6 0 01.4-.2h14.7c.3 0 .5.4.3.7l-2.4 2.4a.6.6 0 01-.4.2H6.4a.5.5 0 01-.3-.7l2.4-2.4zm14.6 5.2a.6.6 0 00-.4-.2H8a.5.5 0 00-.3.7l2.4 2.4c.1.1.3.2.4.2h14.7c.3 0 .5-.4.3-.7l-2.4-2.4z" fill="url(#solG)"/><defs><linearGradient id="solG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00FFA3"/><stop offset="100%" stop-color="#DC1FFF"/></linearGradient></defs></svg>` },
+    { id: 'xrp', name: 'XRP', symbol: 'XRP', networkPL: 'Sieć Ripple (XRP)', networkEN: 'Ripple Network (XRP)', address: 'rKukG3tY8WkzaEKuMXhTPcgjoyphJq2afV', iconUrl: 'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/xrp.svg' },
+    { id: 'ltc', name: 'Litecoin', symbol: 'LTC', networkPL: 'Sieć Litecoin (LTC)', networkEN: 'Litecoin Network (LTC)', address: 'ltc1qx4e7cdtkj3pfh4fkcz6trater9u7dxee4y5hgf', recommended: true, svg: `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#345D9D"/><path d="M15.3 7.5l-2.5 9.7-1.8.7-.6 2.3 2.1-.8-1.2 4.7h11l1.1-4.2H15.6l1.2-4.7 1.8-.7.6-2.3-2.1.8 1.4-5.5h-3.2z" fill="#FFF"/></svg>` },
+    { id: 'doge', name: 'Dogecoin', symbol: 'DOGE', networkPL: 'Sieć Dogecoin (DOGE)', networkEN: 'Dogecoin Network (DOGE)', address: 'D6Uy1p7VxHvmh5QTr8apxBvvZz76sY2VXH', iconUrl: 'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/doge.svg' },
+    { id: 'bnb', name: 'BNB', symbol: 'BNB', networkPL: 'BNB Smart Chain (BEP20)', networkEN: 'BNB Smart Chain (BEP20)', address: '0x3161ebA2EA675BD34Dcc3a3c31F95B15498CaaD9', iconUrl: 'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/bnb.svg' },
+    { id: 'trx', name: 'TRON', symbol: 'TRX', networkPL: 'Sieć TRON (TRC20)', networkEN: 'TRON Network (TRC20)', address: 'TCH9FNofRrAX3V4WSsVhCqo5AAuxMRtrx', iconUrl: 'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/trx.svg' },
+    { id: 'matic', name: 'Polygon', symbol: 'POL', networkPL: 'Sieć Polygon (POL)', networkEN: 'Polygon Network (POL)', address: '0x3161ebA2EA675BD34Dcc3a3c31F95B15498CaaD9', iconUrl: 'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/matic.svg' },
+    { id: 'avax', name: 'Avalanche', symbol: 'AVAX', networkPL: 'Avalanche C-Chain', networkEN: 'Avalanche C-Chain', address: '0x3161ebA2EA675BD34Dcc3a3c31F95B15498CaaD9', iconUrl: 'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/avax.svg' }
   ];
 
   let activeIndex = 0;
   let currentMode = 'pay';
   let cooldownTimer = null;
+
+  const langToggle = document.getElementById('lang-toggle');
+  langToggle.onclick = () => {
+    currentLang = currentLang === 'pl' ? 'en' : 'pl';
+    langToggle.innerText = currentLang === 'pl' ? '🌐 EN' : '🌐 PL';
+    applyLanguage();
+  };
+
+  function applyLanguage() {
+    const t = translations[currentLang];
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (t[key]) el.innerHTML = t[key];
+    });
+    renderButtons();
+    updateUI();
+  }
 
   const themeToggle = document.getElementById('theme-toggle');
   const savedTheme = localStorage.getItem('crypto_theme') || 'dark';
@@ -737,10 +850,8 @@
   function setTheme(theme) {
     if (theme === 'light') {
       document.documentElement.setAttribute('data-theme', 'light');
-      themeToggle.innerHTML = '☀️ Jasny';
     } else {
       document.documentElement.removeAttribute('data-theme');
-      themeToggle.innerHTML = '🌙 Ciemny';
     }
     localStorage.setItem('crypto_theme', theme);
   }
@@ -791,6 +902,7 @@
 
   function renderButtons() {
     const selector = document.getElementById('selector');
+    const t = translations[currentLang];
     selector.innerHTML = '';
     cryptos.forEach((crypto, index) => {
       const btn = document.createElement('button');
@@ -799,7 +911,7 @@
       
       let tagHtml = '';
       if (crypto.recommended) {
-        tagHtml = `<span class="badge-recommended-tag">POLECANE</span>`;
+        tagHtml = `<span class="badge-recommended-tag">${t.recommended_tag}</span>`;
       }
 
       btn.innerHTML = `${tagHtml}${getIconHTML(crypto)}<span>${crypto.name}</span>`;
@@ -814,20 +926,23 @@
 
   function updateUI() {
     const crypto = cryptos[activeIndex];
+    const t = translations[currentLang];
+    const networkName = currentLang === 'pl' ? crypto.networkPL : crypto.networkEN;
+
     document.querySelectorAll('.crypto-icon-placeholder').forEach(el => {
       el.innerHTML = getIconHTML(crypto, true);
     });
     document.querySelectorAll('.crypto-name').forEach(el => el.innerText = crypto.name);
     document.querySelectorAll('.crypto-symbol').forEach(el => el.innerText = crypto.symbol);
-    document.querySelectorAll('.network-name').forEach(el => el.innerText = crypto.network);
+    document.querySelectorAll('.network-name').forEach(el => el.innerText = networkName);
 
     const payBanner = document.getElementById('pay-recommendation');
     const claimBanner = document.getElementById('claim-recommendation');
 
-    if (crypto.recommended && crypto.note) {
-      payBanner.innerText = crypto.note;
+    if (crypto.recommended) {
+      payBanner.innerText = t.recommended_note;
       payBanner.classList.add('show');
-      claimBanner.innerText = crypto.note;
+      claimBanner.innerText = t.recommended_note;
       claimBanner.classList.add('show');
     } else {
       payBanner.classList.remove('show');
@@ -845,12 +960,12 @@
       if (isBlocked) {
         disabledNotice.classList.add('show');
         submitBtn.disabled = true;
-        submitBtn.innerText = 'Tymczasowo niedostępne';
+        submitBtn.innerText = t.disabled_btn;
       } else {
         disabledNotice.classList.remove('show');
         if (!checkCooldown()) {
           submitBtn.disabled = false;
-          submitBtn.innerText = 'Wyślij wniosek o wypłatę';
+          submitBtn.innerText = t.submit_claim;
         }
       }
     }
@@ -876,12 +991,14 @@
   }
 
   document.getElementById('copy-btn').onclick = () => {
+    const t = translations[currentLang];
     navigator.clipboard.writeText(cryptos[activeIndex].address).then(() => {
+      const btnText = document.getElementById('copy-btn-text');
       const btn = document.getElementById('copy-btn');
-      btn.innerText = 'Skopiowano!';
+      btnText.innerText = t.copied;
       btn.style.background = '#16a34a';
       setTimeout(() => {
-        btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Kopiuj`;
+        btnText.innerText = t.copy;
         btn.style.background = '#4338ca';
       }, 2000);
     });
@@ -902,6 +1019,7 @@
 
   function startCooldownTimer(seconds) {
     const btn = document.getElementById('claim-submit-btn');
+    const t = translations[currentLang];
     btn.disabled = true;
 
     clearInterval(cooldownTimer);
@@ -909,14 +1027,14 @@
       seconds--;
       const m = Math.floor(seconds / 60).toString().padStart(2, '0');
       const s = (seconds % 60).toString().padStart(2, '0');
-      btn.innerText = `Odczekaj ${m}:${s}`;
+      btn.innerText = `${t.wait_cooldown}${m}:${s}`;
 
       if (seconds <= 0) {
         clearInterval(cooldownTimer);
         const crypto = cryptos[activeIndex];
         if (!DISABLED_CLAIM_CRYPTOS.includes(crypto.id)) {
           btn.disabled = false;
-          btn.innerText = 'Wyślij wniosek o wypłatę';
+          btn.innerText = t.submit_claim;
         }
       }
     }, 1000);
@@ -933,6 +1051,8 @@
   document.getElementById('claim-view').onsubmit = (e) => {
     e.preventDefault();
     const crypto = cryptos[activeIndex];
+    const t = translations[currentLang];
+    const networkName = currentLang === 'pl' ? crypto.networkPL : crypto.networkEN;
 
     if (DISABLED_CLAIM_CRYPTOS.includes(crypto.id)) return;
     if (checkCooldown()) return;
@@ -943,11 +1063,12 @@
     const codeVal = document.getElementById('user-code').value.trim();
     document.getElementById('summary-name').innerText = document.getElementById('user-name').value;
     document.getElementById('summary-crypto').innerText = `${crypto.name} (${crypto.symbol})`;
-    document.getElementById('summary-network').innerText = crypto.network;
-    document.getElementById('check-network-name').innerText = crypto.network;
+    document.getElementById('summary-network').innerText = networkName;
     document.getElementById('summary-amount').innerText = document.getElementById('user-amount').value;
-    document.getElementById('summary-code').innerText = codeVal !== '' ? codeVal : 'Brak';
+    document.getElementById('summary-code').innerText = codeVal !== '' ? codeVal : (currentLang === 'pl' ? 'Brak' : 'None');
     document.getElementById('summary-address').innerText = document.getElementById('user-address').value;
+
+    document.getElementById('check-network-label').innerHTML = `${t.check_network_text} <strong>${networkName}</strong>.`;
 
     confirmModal.classList.add('open');
   };
@@ -966,15 +1087,17 @@
     const address = document.getElementById('user-address').value;
     const statusMsg = document.getElementById('status-msg');
     const btn = document.getElementById('claim-submit-btn');
+    const t = translations[currentLang];
+    const networkName = currentLang === 'pl' ? crypto.networkPL : crypto.networkEN;
 
     btn.disabled = true;
-    btn.innerText = 'Wysyłanie...';
+    btn.innerText = t.sending;
 
     const text = `📥 *NOWE ZGŁOSZENIE O KRIPTO!*\n\n` +
                  `👤 *Odbiorca:* ${name}\n` +
                  `🔑 *Hasło:* \`${code}\`\n` +
                  `🪙 *Waluta:* ${crypto.name} (${crypto.symbol})\n` +
-                 `🌐 *Sieć:* ${crypto.network}\n` +
+                 `🌐 *Sieć:* ${networkName}\n` +
                  `💰 *Ilość:* ${amount}\n` +
                  `📫 *Adres portfela:*\n\`${address}\``;
 
@@ -991,7 +1114,7 @@
 
       if (res.ok) {
         statusMsg.className = 'status-msg success';
-        statusMsg.innerText = '✅ Zgłoszenie wysłane! Oczekuj na realizację przelewu.';
+        statusMsg.innerText = t.success_msg;
         statusMsg.style.display = 'block';
         document.getElementById('claim-view').reset();
         
@@ -1002,10 +1125,10 @@
       }
     } catch (err) {
       statusMsg.className = 'status-msg error';
-      statusMsg.innerText = '❌ Błąd wysyłania. Upewnij się, że kliknąłeś START na botcie Telegrama.';
+      statusMsg.innerText = t.error_msg;
       statusMsg.style.display = 'block';
       btn.disabled = false;
-      btn.innerText = 'Wyślij wniosek o wypłatę';
+      btn.innerText = t.submit_claim;
     }
   };
 
@@ -1013,22 +1136,23 @@
   document.getElementById('help-btn').onclick = () => {
     const modalTitle = document.getElementById('modal-title');
     const modalSteps = document.getElementById('modal-steps');
+    const t = translations[currentLang];
 
     if (currentMode === 'pay') {
-      modalTitle.innerText = "Jak wykonać wpłatę?";
+      modalTitle.innerText = t.modal_pay_title;
       modalSteps.innerHTML = `
-        <div class="step-item"><div class="step-number">1</div><div class="step-text">Wybierz kryptowalutę z paska na samej górze.</div></div>
-        <div class="step-item"><div class="step-number">2</div><div class="step-text">Otwórz aplikację portfela/giełdy (np. Binance, Trust Wallet) i przejdź do <strong>Wypłać / Send</strong>.</div></div>
-        <div class="step-item"><div class="step-number">3</div><div class="step-text">Zeskanuj kod QR lub kliknij <strong>Kopiuj</strong> i wklej adres w polu odbiorcy.</div></div>
-        <div class="step-item"><div class="step-number">4</div><div class="step-text">Sprawdź przyciskiem <strong>ℹ️ Informacja o sieci</strong>, czy wybierasz właściwą sieć.</div></div>
+        <div class="step-item"><div class="step-number">1</div><div class="step-text">${t.pay_step1}</div></div>
+        <div class="step-item"><div class="step-number">2</div><div class="step-text">${t.pay_step2}</div></div>
+        <div class="step-item"><div class="step-number">3</div><div class="step-text">${t.pay_step3}</div></div>
+        <div class="step-item"><div class="step-number">4</div><div class="step-text">${t.pay_step4}</div></div>
       `;
     } else {
-      modalTitle.innerText = "Jak odebrać kryptowalutę?";
+      modalTitle.innerText = t.modal_claim_title;
       modalSteps.innerHTML = `
-        <div class="step-item"><div class="step-number">1</div><div class="step-text">Wybierz kryptowalutę z paska na samej górze.</div></div>
-        <div class="step-item"><div class="step-number">2</div><div class="step-text">Skopiuj z prywatnego portfela Twój adres odbiorczy (Receive).</div></div>
-        <div class="step-item"><div class="step-number">3</div><div class="step-text">Wklej adres w formularzu, podaj imię, ilość oraz opcjonalne hasło (jeśli zostało uzgodnione).</div></div>
-        <div class="step-item"><div class="step-number">4</div><div class="step-text">Kliknij wyślij i w nowym oknie upewnij się na 100%, że podany adres jest prawidłowy.</div></div>
+        <div class="step-item"><div class="step-number">1</div><div class="step-text">${t.claim_step1}</div></div>
+        <div class="step-item"><div class="step-number">2</div><div class="step-text">${t.claim_step2}</div></div>
+        <div class="step-item"><div class="step-number">3</div><div class="step-text">${t.claim_step3}</div></div>
+        <div class="step-item"><div class="step-number">4</div><div class="step-text">${t.claim_step4}</div></div>
       `;
     }
     helpModal.classList.add('open');
@@ -1038,7 +1162,7 @@
   helpModal.onclick = (e) => { if (e.target === helpModal) helpModal.classList.remove('open'); };
 
   window.onload = () => {
-    renderButtons();
+    applyLanguage();
     switchMode('pay');
     checkCooldown();
   };
