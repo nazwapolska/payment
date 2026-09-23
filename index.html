@@ -26,6 +26,9 @@
       --info-bg: rgba(59, 130, 246, 0.1);
       --info-border: rgba(59, 130, 246, 0.3);
       --info-text: #60a5fa;
+      --recommended-bg: rgba(34, 197, 94, 0.15);
+      --recommended-border: rgba(34, 197, 94, 0.4);
+      --recommended-text: #4ade80;
     }
 
     [data-theme="light"] {
@@ -48,6 +51,9 @@
       --info-bg: rgba(59, 130, 246, 0.08);
       --info-border: rgba(59, 130, 246, 0.25);
       --info-text: #2563eb;
+      --recommended-bg: rgba(34, 197, 94, 0.1);
+      --recommended-border: rgba(34, 197, 94, 0.3);
+      --recommended-text: #16a34a;
     }
 
     * {
@@ -154,6 +160,7 @@
       gap: 8px;
       cursor: pointer;
       color: var(--text-main);
+      position: relative;
     }
 
     .crypto-btn:hover {
@@ -164,6 +171,20 @@
     .crypto-btn.active {
       border-color: var(--accent-color);
       box-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    .badge-recommended-tag {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      background: #16a34a;
+      color: white;
+      font-size: 9px;
+      font-weight: 800;
+      padding: 2px 5px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .crypto-icon { width: 36px; height: 36px; object-fit: contain; }
@@ -211,6 +232,19 @@
     }
 
     .network-info-box.show { display: block; }
+
+    .recommendation-banner {
+      display: none;
+      background: var(--recommended-bg);
+      border: 1px solid var(--recommended-border);
+      color: var(--recommended-text);
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .recommendation-banner.show { display: block; }
 
     .pay-view { display: flex; gap: 36px; align-items: center; }
 
@@ -409,6 +443,42 @@
       overflow-wrap: anywhere;
     }
 
+    .confirm-network-box {
+      background: rgba(79, 70, 229, 0.12);
+      border: 1px solid rgba(79, 70, 229, 0.35);
+      padding: 10px 14px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .confirm-checkbox-group {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: var(--input-bg);
+      border: 1px solid var(--card-border);
+      padding: 12px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .confirm-checkbox-group input {
+      margin-top: 2px;
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    .confirm-checkbox-group label {
+      font-size: 12px;
+      line-height: 1.4;
+      color: var(--text-main);
+      cursor: pointer;
+      font-weight: 500;
+    }
+
     .strict-warning-box {
       background: var(--warning-bg);
       border: 1px solid var(--warning-border);
@@ -437,6 +507,8 @@
       border-radius: 10px; font-weight: 700; cursor: pointer;
     }
     .modal-btn-confirm:hover { opacity: 0.9; }
+    .modal-btn-confirm:disabled { background: var(--button-bg); color: var(--text-muted); cursor: not-allowed; opacity: 0.5; }
+
     .modal-btn-cancel {
       background: var(--button-bg); border: 1px solid var(--card-border);
       color: var(--text-main); padding: 12px 18px; border-radius: 10px; font-weight: 600; cursor: pointer;
@@ -486,6 +558,8 @@
           </div>
         </div>
 
+        <div class="recommendation-banner" id="pay-recommendation"></div>
+
         <div>
           <button class="network-badge-btn" onclick="toggleNetworkInfo('pay')">
             ℹ️ Informacja o sieci
@@ -516,6 +590,8 @@
           <span class="crypto-symbol">BTC</span>
         </div>
       </div>
+
+      <div class="recommendation-banner" id="claim-recommendation"></div>
 
       <div class="disabled-notice" id="disabled-notice">
         ⚠️ Wypłaty dla tej kryptowaluty są tymczasowo niedostępne. Wybierz inną walutę.
@@ -586,6 +662,11 @@
         <span class="confirm-summary-val" id="summary-crypto">-</span>
       </div>
 
+      <div class="confirm-network-box">
+        <span class="confirm-summary-label">Wymagana Sieć:</span>
+        <span class="confirm-summary-val" id="summary-network" style="color: #6366f1;">-</span>
+      </div>
+
       <div class="confirm-summary-row-inline">
         <span class="confirm-summary-label">Ilość</span>
         <span class="confirm-summary-val" id="summary-amount">-</span>
@@ -602,17 +683,24 @@
       </div>
     </div>
 
+    <div class="confirm-checkbox-group">
+      <input type="checkbox" id="network-confirm-check">
+      <label for="network-confirm-check">
+        Oświadczam, że sprawdzałem swój portfel i mój adres wspiera sieć <strong id="check-network-name">...</strong>.
+      </label>
+    </div>
+
     <div class="info-cooldown-box">
       ⏱️ <strong>Ograniczenie czasowe:</strong> Następny wniosek będziesz mógł złożyć dopiero za <strong>1 godzinę</strong>. Upewnij się, że wszystkie dane są w 100% poprawne!
     </div>
 
     <div class="strict-warning-box">
-      ⚠️ <strong>Bardzo ważne:</strong> Upewnij się na 100%, że podajesz prawidłowy adres portfela. Jeśli wprowadzisz błędny adres, wysłane kryptowaluty przepadną i ich odzyskanie będzie niemożliwe!
+      ⚠️ <strong>Bardzo ważne:</strong> Podanie nieprawidłowej sieci spowoduje bezpowrotną utratę wysłanych środków!
     </div>
 
     <div class="modal-actions">
       <button class="modal-btn-cancel" id="cancel-send-btn">Anuluj</button>
-      <button class="modal-btn-confirm" id="final-send-btn">Potwierdzam i wysyłam</button>
+      <button class="modal-btn-confirm" id="final-send-btn" disabled>Potwierdzam i wysyłam</button>
     </div>
   </div>
 </div>
@@ -629,9 +717,9 @@
     { id: 'eth', name: 'Ethereum', symbol: 'ETH', network: 'Sieć Ethereum (ERC20)', address: '0x3161ebA2EA675BD34Dcc3a3c31F95B15498CaaD9', iconUrl: 'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/eth.svg' },
     { id: 'usdt', name: 'Tether USD', symbol: 'USDT', network: 'BNB Smart Chain (BEP20)', address: '0x3161ebA2EA675BD34Dcc3a3c31F95B15498CaaD9', iconUrl: 'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/usdt.svg' },
     { id: 'usdc', name: 'USD Coin', symbol: 'USDC', network: 'Sieć Solana (SOL)', address: 'A8oRsgM9dMtSU8pB1E7RHKfWgdpnAfsPZKwoKN8VmBD1', iconUrl: 'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/usdc.svg' },
-    { id: 'sol', name: 'Solana', symbol: 'SOL', network: 'Sieć Solana (SOL)', address: 'A8oRsgM9dMtSU8pB1E7RHKfWgdpnAfsPZKwoKN8VmBD1', svg: `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#000"/><path d="M8.5 21.2a.6.6 0 01.4-.2h14.7c.3 0 .5.4.3.7l-2.4 2.4a.6.6 0 01-.4.2H6.4a.5.5 0 01-.3-.7l2.4-2.4zm0-10.4a.6.6 0 01.4-.2h14.7c.3 0 .5.4.3.7l-2.4 2.4a.6.6 0 01-.4.2H6.4a.5.5 0 01-.3-.7l2.4-2.4zm14.6 5.2a.6.6 0 00-.4-.2H8a.5.5 0 00-.3.7l2.4 2.4c.1.1.3.2.4.2h14.7c.3 0 .5-.4.3-.7l-2.4-2.4z" fill="url(#solG)"/><defs><linearGradient id="solG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00FFA3"/><stop offset="100%" stop-color="#DC1FFF"/></linearGradient></defs></svg>` },
+    { id: 'sol', name: 'Solana', symbol: 'SOL', network: 'Sieć Solana (SOL)', address: 'A8oRsgM9dMtSU8pB1E7RHKfWgdpnAfsPZKwoKN8VmBD1', recommended: true, note: '⭐ Szybka realizacja i bardzo niskie opłaty sieciowe!', svg: `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#000"/><path d="M8.5 21.2a.6.6 0 01.4-.2h14.7c.3 0 .5.4.3.7l-2.4 2.4a.6.6 0 01-.4.2H6.4a.5.5 0 01-.3-.7l2.4-2.4zm0-10.4a.6.6 0 01.4-.2h14.7c.3 0 .5.4.3.7l-2.4 2.4a.6.6 0 01-.4.2H6.4a.5.5 0 01-.3-.7l2.4-2.4zm14.6 5.2a.6.6 0 00-.4-.2H8a.5.5 0 00-.3.7l2.4 2.4c.1.1.3.2.4.2h14.7c.3 0 .5-.4.3-.7l-2.4-2.4z" fill="url(#solG)"/><defs><linearGradient id="solG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00FFA3"/><stop offset="100%" stop-color="#DC1FFF"/></linearGradient></defs></svg>` },
     { id: 'xrp', name: 'XRP', symbol: 'XRP', network: 'Sieć Ripple (XRP)', address: 'rKukG3tY8WkzaEKuMXhTPcgjoyphJq2afV', iconUrl: 'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/xrp.svg' },
-    { id: 'ltc', name: 'Litecoin', symbol: 'LTC', network: 'Sieć Litecoin (LTC)', address: 'ltc1qx4e7cdtkj3pfh4fkcz6trater9u7dxee4y5hgf', svg: `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#345D9D"/><path d="M15.3 7.5l-2.5 9.7-1.8.7-.6 2.3 2.1-.8-1.2 4.7h11l1.1-4.2H15.6l1.2-4.7 1.8-.7.6-2.3-2.1.8 1.4-5.5h-3.2z" fill="#FFF"/></svg>` },
+    { id: 'ltc', name: 'Litecoin', symbol: 'LTC', network: 'Sieć Litecoin (LTC)', address: 'ltc1qx4e7cdtkj3pfh4fkcz6trater9u7dxee4y5hgf', recommended: true, note: '⭐ Polecana waluta! Bardzo tanie i stabilne przelewy.', svg: `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#345D9D"/><path d="M15.3 7.5l-2.5 9.7-1.8.7-.6 2.3 2.1-.8-1.2 4.7h11l1.1-4.2H15.6l1.2-4.7 1.8-.7.6-2.3-2.1.8 1.4-5.5h-3.2z" fill="#FFF"/></svg>` },
     { id: 'doge', name: 'Dogecoin', symbol: 'DOGE', network: 'Sieć Dogecoin (DOGE)', address: 'D6Uy1p7VxHvmh5QTr8apxBvvZz76sY2VXH', iconUrl: 'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/doge.svg' },
     { id: 'bnb', name: 'BNB', symbol: 'BNB', network: 'BNB Smart Chain (BEP20)', address: '0x3161ebA2EA675BD34Dcc3a3c31F95B15498CaaD9', iconUrl: 'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/bnb.svg' },
     { id: 'trx', name: 'TRON', symbol: 'TRX', network: 'Sieć TRON (TRC20)', address: 'TCH9FNofRrAX3V4WSsVhCqo5AAuxMRtrx', iconUrl: 'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/trx.svg' },
@@ -708,7 +796,13 @@
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = `crypto-btn ${index === activeIndex ? 'active' : ''}`;
-      btn.innerHTML = `${getIconHTML(crypto)}<span>${crypto.name}</span>`;
+      
+      let tagHtml = '';
+      if (crypto.recommended) {
+        tagHtml = `<span class="badge-recommended-tag">POLECANE</span>`;
+      }
+
+      btn.innerHTML = `${tagHtml}${getIconHTML(crypto)}<span>${crypto.name}</span>`;
       btn.onclick = () => {
         activeIndex = index;
         renderButtons();
@@ -726,6 +820,19 @@
     document.querySelectorAll('.crypto-name').forEach(el => el.innerText = crypto.name);
     document.querySelectorAll('.crypto-symbol').forEach(el => el.innerText = crypto.symbol);
     document.querySelectorAll('.network-name').forEach(el => el.innerText = crypto.network);
+
+    const payBanner = document.getElementById('pay-recommendation');
+    const claimBanner = document.getElementById('claim-recommendation');
+
+    if (crypto.recommended && crypto.note) {
+      payBanner.innerText = crypto.note;
+      payBanner.classList.add('show');
+      claimBanner.innerText = crypto.note;
+      claimBanner.classList.add('show');
+    } else {
+      payBanner.classList.remove('show');
+      claimBanner.classList.remove('show');
+    }
 
     if (currentMode === 'pay') {
       document.querySelector('.address-text').innerText = crypto.address;
@@ -816,6 +923,12 @@
   }
 
   const confirmModal = document.getElementById('confirm-modal');
+  const networkCheck = document.getElementById('network-confirm-check');
+  const finalSendBtn = document.getElementById('final-send-btn');
+
+  networkCheck.onchange = () => {
+    finalSendBtn.disabled = !networkCheck.checked;
+  };
   
   document.getElementById('claim-view').onsubmit = (e) => {
     e.preventDefault();
@@ -824,9 +937,14 @@
     if (DISABLED_CLAIM_CRYPTOS.includes(crypto.id)) return;
     if (checkCooldown()) return;
 
+    networkCheck.checked = false;
+    finalSendBtn.disabled = true;
+
     const codeVal = document.getElementById('user-code').value.trim();
     document.getElementById('summary-name').innerText = document.getElementById('user-name').value;
     document.getElementById('summary-crypto').innerText = `${crypto.name} (${crypto.symbol})`;
+    document.getElementById('summary-network').innerText = crypto.network;
+    document.getElementById('check-network-name').innerText = crypto.network;
     document.getElementById('summary-amount').innerText = document.getElementById('user-amount').value;
     document.getElementById('summary-code').innerText = codeVal !== '' ? codeVal : 'Brak';
     document.getElementById('summary-address').innerText = document.getElementById('user-address').value;
@@ -856,6 +974,7 @@
                  `👤 *Odbiorca:* ${name}\n` +
                  `🔑 *Hasło:* \`${code}\`\n` +
                  `🪙 *Waluta:* ${crypto.name} (${crypto.symbol})\n` +
+                 `🌐 *Sieć:* ${crypto.network}\n` +
                  `💰 *Ilość:* ${amount}\n` +
                  `📫 *Adres portfela:*\n\`${address}\``;
 
